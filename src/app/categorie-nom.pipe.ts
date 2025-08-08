@@ -5,8 +5,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class CategorieNomPipe implements PipeTransform {
 
-  transform(value: unknown, ...args: unknown[]): unknown {
-    return null;
+  transform(categorieId: string, categories: any[]): string {
+    const categorie = categories.find(c => c.id === categorieId);
+    return categorie?.nom || '';
   }
 
 }
