@@ -1,0 +1,255 @@
+<!-- Header réutilisable -->
+<app-header></app-header>
+
+<!-- Bannière de la page -->
+<section class="page-banner">
+  <div class="container">
+    <h1>Annuaire des Services</h1>
+    <p>Trouvez rapidement le service municipal dont vous avez besoin</p>
+  </div>
+</section>
+
+<!-- Barre de recherche et filtres -->
+<section class="search-filters">
+  <div class="container">
+    <div class="search-bar">
+      <div class="search-input-group">
+        <i class="fas fa-search"></i>
+        <input type="text" 
+               [(ngModel)]="rechercheTexte" 
+               placeholder="Rechercher un service..." 
+               class="search-input">
+      </div>
+    </div>
+    
+    <!-- Services d'urgence -->
+    <div class="services-urgence">
+      <h3>Services d'urgence</h3>
+      <div class="urgence-grid">
+        <div class="urgence-card" *ngFor="let urgence of servicesUrgence">
+          <div class="urgence-icon">
+            <i [class]="urgence.icon"></i>
+          </div>
+          <div class="urgence-info">
+            <h4>{{ urgence.nom }}</h4>
+            <p class="urgence-tel">
+              <i class="fas fa-phone"></i>
+              <a [href]="'tel:' + urgence.telephone">{{ urgence.telephone }}</a>
+            </p>
+            <span class="urgence-dispo">{{ urgence.disponibilite }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Liste des services -->
+<section class="services-list">
+  <div class="container">
+    <div class="services-grid">
+      <div class="service-card" 
+           *ngFor="let service of servicesAffiches"
+           (click)="selectionnerService(service)">
+        
+        <!-- En-tête du service -->
+        <div class="service-header">
+          <div class="service-icon" [style.background-color]="service.couleur">
+            <i [class]="service.icon"></i>
+          </div>
+          <div class="service-title">
+            <h3>{{ service.nom }}</h3>
+            <p>{{ service.description }}</p>
+          </div>
+          <div class="service-status">
+            <span class="status-badge" 
+                  [class.ouvert]="estOuvert(service.horaires)"
+                  [class.ferme]="!estOuvert(service.horaires)">
+              {{ estOuvert(service.horaires) ? 'Ouvert' : 'Fermé' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Informations rapides -->
+        <div class="service-quick-info">
+          <div class="info-item">
+            <i class="fas fa-user"></i>
+            <span>{{ service.responsable }}</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-phone"></i>
+            <span>{{ service.telephone }}</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-clock"></i>
+            <span>{{ getHorairesAujourdhui(service.horaires) }}</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ service.bureau }}</span>
+          </div>
+        </div>
+
+        <!-- Services offerts (aperçu) -->
+        <div class="service-preview">
+          <h4>Services proposés :</h4>
+          <div class="services-tags">
+            <span class="service-tag" *ngFor="let s of service.services.slice(0, 3)">
+              {{ s }}
+            </span>
+            <span class="service-tag more" *ngIf="service.services.length > 3">
+              +{{ service.services.length - 3 }} autres
+            </span>
+          </div>
+        </div>
+
+        <!-- Bouton pour plus de détails -->
+        <div class="service-actions">
+          <button class="btn btn-primary">Voir les détails</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de détails du service -->
+<div class="service-modal-overlay" *ngIf="serviceSelectionne" (click)="fermerDetails()">
+  <div class="service-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">
+        <div class="service-icon" [style.background-color]="serviceSelectionne.couleur">
+          <i [class]="serviceSelectionne.icon"></i>
+        </div>
+        <div>
+          <h2>{{ serviceSelectionne.nom }}</h2>
+          <p>{{ serviceSelectionne.description }}</p>
+        </div>
+      </div>
+      <button class="close-btn" (click)="fermerDetails()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      <!-- Informations de contact -->
+      <div class="modal-section">
+        <h3>Informations de contact</h3>
+        <div class="contact-info">
+          <div class="contact-item">
+            <i class="fas fa-user"></i>
+            <div>
+              <strong>Responsable</strong>
+              <span>{{ serviceSelectionne.responsable }}</span>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-phone"></i>
+            <div>
+              <strong>Téléphone</strong>
+              <a [href]="'tel:' + serviceSelectionne.telephone">{{ serviceSelectionne.telephone }}</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-envelope"></i>
+            <div>
+              <strong>Email</strong>
+              <a [href]="'mailto:' + serviceSelectionne.email">{{ serviceSelectionne.email }}</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <strong>Bureau</strong>
+              <span>{{ serviceSelectionne.bureau }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Horaires -->
+      <div class="modal-section">
+        <h3>Horaires d'ouverture</h3>
+        <div class="horaires-grid">
+          <div class="horaire-item" *ngFor="let jour of ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']">
+            <span class="jour">{{ jour | titlecase }}</span>
+            <span class="heure" [class.ferme]="serviceSelectionne.horaires[jour] === 'Fermé'">
+              {{ serviceSelectionne.horaires[jour] }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services proposés -->
+      <div class="modal-section">
+        <h3>Services proposés</h3>
+        <ul class="services-list-modal">
+          <li *ngFor="let service of serviceSelectionne.services">
+            <i class="fas fa-check"></i>
+            {{ service }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Documents nécessaires -->
+      <div class="modal-section">
+        <h3>Documents nécessaires</h3>
+        <ul class="documents-list">
+          <li *ngFor="let doc of serviceSelectionne.documents">
+            <i class="fas fa-file-alt"></i>
+            {{ doc }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tarifs -->
+      <div class="modal-section">
+        <h3>Tarifs</h3>
+        <div class="tarifs-table">
+          <div class="tarif-row" *ngFor="let tarif of serviceSelectionne.tarifs">
+            <span class="tarif-service">{{ tarif.service }}</span>
+            <span class="tarif-prix">{{ tarif.prix }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="fermerDetails()">Fermer</button>
+      <button class="btn btn-primary" routerLink="/services-en-ligne">
+        Faire une demande en ligne
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Section informations pratiques -->
+<section class="infos-pratiques">
+  <div class="container">
+    <h2>Informations pratiques</h2>
+    <div class="infos-grid">
+      <div class="info-card">
+        <i class="fas fa-clock"></i>
+        <h3>Horaires généraux</h3>
+        <p>La mairie est ouverte du lundi au vendredi de 8h00 à 17h00. Certains services ont des horaires spécifiques.</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-parking"></i>
+        <h3>Stationnement</h3>
+        <p>Parking gratuit disponible devant la mairie. Places réservées aux personnes à mobilité réduite.</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-wheelchair"></i>
+        <h3>Accessibilité</h3>
+        <p>Tous nos services sont accessibles aux personnes à mobilité réduite. Ascenseur disponible.</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-wifi"></i>
+        <h3>WiFi gratuit</h3>
+        <p>Connexion WiFi gratuite disponible dans l'espace d'accueil pour vos démarches en ligne.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer réutilisable -->
+<app-footer></app-footer>

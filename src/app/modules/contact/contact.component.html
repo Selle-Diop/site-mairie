@@ -1,0 +1,620 @@
+<!-- Header réutilisable -->
+<app-header></app-header>
+
+<!-- Bannière de page -->
+<section class="page-banner">
+  <div class="container">
+    <h1><i class="fas fa-phone"></i> Contact</h1>
+    <p>Contactez-nous facilement et trouvez toutes les informations pratiques</p>
+  </div>
+</section>
+
+<!-- Navigation par onglets -->
+<section class="tabs-section">
+  <div class="container">
+    <nav class="tabs-navigation" role="tablist">
+      <button 
+        class="tab-btn" 
+        [class.active]="ongletActif === 'contact'"
+        (click)="changerOnglet('contact')"
+        role="tab"
+        [attr.aria-selected]="ongletActif === 'contact'"
+        aria-controls="contact-panel">
+        <i class="fas fa-envelope"></i>
+        Nous contacter
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="ongletActif === 'services'"
+        (click)="changerOnglet('services')"
+        role="tab"
+        [attr.aria-selected]="ongletActif === 'services'"
+        aria-controls="services-panel">
+        <i class="fas fa-building"></i>
+        Services
+        <span class="badge">{{servicesContact.length}}</span>
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="ongletActif === 'personnel'"
+        (click)="changerOnglet('personnel')"
+        role="tab"
+        [attr.aria-selected]="ongletActif === 'personnel'"
+        aria-controls="personnel-panel">
+        <i class="fas fa-users"></i>
+        Personnel
+        <span class="badge">{{personnelMairie.length}}</span>
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="ongletActif === 'infos'"
+        (click)="changerOnglet('infos')"
+        role="tab"
+        [attr.aria-selected]="ongletActif === 'infos'"
+        aria-controls="infos-panel">
+        <i class="fas fa-info-circle"></i>
+        Infos pratiques
+      </button>
+    </nav>
+  </div>
+</section>
+
+<!-- Contenu des onglets -->
+<section class="content-section">
+  <div class="container">
+
+    <!-- Onglet Formulaire de contact -->
+    <div 
+      *ngIf="ongletActif === 'contact'" 
+      class="tab-content"
+      id="contact-panel"
+      role="tabpanel"
+      aria-labelledby="contact-tab">
+      
+      <div class="section-header">
+        <h2>Formulaire de contact</h2>
+        <p>Envoyez-nous un message, nous vous répondrons dans les plus brefs délais</p>
+      </div>
+
+      <!-- Message de confirmation -->
+      <div *ngIf="messageEnvoye" class="alert alert-success" role="alert">
+        <i class="fas fa-check-circle"></i>
+        <strong>Message envoyé avec succès !</strong>
+        <p>Nous avons bien reçu votre message et vous répondrons dans les plus brefs délais.</p>
+      </div>
+
+      <div class="contact-container">
+        <!-- Formulaire -->
+        <div class="contact-form-section">
+          <form [formGroup]="contactForm" (ngSubmit)="envoyerMessage()" class="contact-form">
+            
+            <!-- Informations personnelles -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nom">Nom complet *</label>
+                <input 
+                  type="text" 
+                  id="nom"
+                  formControlName="nom"
+                  class="form-control"
+                  [class.error]="nomInvalide"
+                  placeholder="Votre nom et prénom"
+                  aria-describedby="nom-error">
+                <div *ngIf="nomInvalide" id="nom-error" class="error-message" role="alert">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Le nom est requis (minimum 2 caractères)
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input 
+                  type="email" 
+                  id="email"
+                  formControlName="email"
+                  class="form-control"
+                  [class.error]="emailInvalide"
+                  placeholder="votre.email@exemple.com"
+                  aria-describedby="email-error">
+                <div *ngIf="emailInvalide" id="email-error" class="error-message" role="alert">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Un email valide est requis
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="telephone">Téléphone</label>
+                <input 
+                  type="tel" 
+                  id="telephone"
+                  formControlName="telephone"
+                  class="form-control"
+                  placeholder="+221 XX XXX XX XX">
+              </div>
+
+              <div class="form-group">
+                <label for="service">Service concerné *</label>
+                <select 
+                  id="service"
+                  formControlName="service"
+                  class="form-control">
+                  <option *ngFor="let service of servicesContact" [value]="service.id">
+                    {{service.nom}}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Sujet et message -->
+            <div class="form-group">
+              <label for="sujet">Sujet *</label>
+              <input 
+                type="text" 
+                id="sujet"
+                formControlName="sujet"
+                class="form-control"
+                [class.error]="sujetInvalide"
+                placeholder="Objet de votre demande"
+                aria-describedby="sujet-error">
+              <div *ngIf="sujetInvalide" id="sujet-error" class="error-message" role="alert">
+                <i class="fas fa-exclamation-circle"></i>
+                Le sujet est requis (minimum 5 caractères)
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message *</label>
+              <textarea 
+                id="message"
+                formControlName="message"
+                class="form-control"
+                [class.error]="messageInvalide"
+                rows="6"
+                placeholder="Décrivez votre demande en détail..."
+                aria-describedby="message-error message-count"></textarea>
+              <div class="message-info">
+                <div *ngIf="messageInvalide" id="message-error" class="error-message" role="alert">
+                  <i class="fas fa-exclamation-circle"></i>
+                  Le message est requis (minimum 20 caractères)
+                </div>
+                <div id="message-count" class="character-count">
+                  {{contactForm.get('message')?.value?.length || 0}} caractères
+                </div>
+              </div>
+            </div>
+
+            <!-- Conditions -->
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input 
+                  type="checkbox" 
+                  formControlName="accepteConditions"
+                  [class.error]="conditionsInvalides">
+                <span class="checkmark"></span>
+                J'accepte que mes données soient utilisées pour traiter ma demande *
+              </label>
+              <div *ngIf="conditionsInvalides" class="error-message" role="alert">
+                <i class="fas fa-exclamation-circle"></i>
+                Vous devez accepter les conditions
+              </div>
+            </div>
+
+            <!-- Bouton d'envoi -->
+            <div class="form-actions">
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="contactForm.invalid || messageEnvoye"
+                [attr.aria-label]="annonceStatutFormulaire()">
+                <i class="fas fa-paper-plane"></i>
+                <span *ngIf="!messageEnvoye">Envoyer le message</span>
+                <span *ngIf="messageEnvoye">Message envoyé</span>
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-secondary"
+                (click)="contactForm.reset(); contactForm.patchValue({service: 'accueil'})">
+                <i class="fas fa-undo"></i>
+                Réinitialiser
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Informations de contact rapide -->
+        <div class="contact-info-section">
+          <div class="contact-card">
+            <h3><i class="fas fa-phone"></i> Contact rapide</h3>
+            
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div class="contact-details">
+                <strong>Accueil général</strong>
+                <p>33 8 XX XX XX XX</p>
+                <button class="btn-link" (click)="appelTelephone('33 8 XX XX XX XX')">
+                  <i class="fas fa-phone"></i> Appeler
+                </button>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="contact-details">
+                <strong>Email général</strong>
+                <p>contact@sicap-liberte.sn</p>
+                <button class="btn-link" (click)="envoyerEmail('contact@sicap-liberte.sn')">
+                  <i class="fas fa-envelope"></i> Écrire
+                </button>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="contact-details">
+                <strong>Adresse</strong>
+                <p>Mairie de Sicap Liberté<br>Avenue Principale<br>Dakar, Sénégal</p>
+                <button class="btn-link" (click)="ouvrirPlan()">
+                  <i class="fas fa-map"></i> Voir le plan
+                </button>
+              </div>
+            </div>
+
+            <!-- Statut d'ouverture -->
+            <div class="status-card" [class.ouvert]="estOuvertAujourdhui()" [class.ferme]="!estOuvertAujourdhui()">
+              <div class="status-indicator">
+                <i class="fas fa-circle"></i>
+              </div>
+              <div class="status-info">
+                <strong *ngIf="estOuvertAujourdhui()">Ouvert aujourd'hui</strong>
+                <strong *ngIf="!estOuvertAujourdhui()">Fermé aujourd'hui</strong>
+                <p>{{getJourActuel()}} - {{getHeureActuelle()}}</p>
+                <ng-container *ngIf="getHorairesJour(getJourActuel()) as horaires">
+                  <p *ngIf="!horaires.ferme">{{horaires.matin}} | {{horaires.apres_midi}}</p>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglet Services -->
+    <div 
+      *ngIf="ongletActif === 'services'" 
+      class="tab-content"
+      id="services-panel"
+      role="tabpanel"
+      aria-labelledby="services-tab">
+      
+      <div class="section-header">
+        <h2>Services municipaux</h2>
+        <p>Trouvez rapidement le service dont vous avez besoin</p>
+      </div>
+
+      <div class="services-grid">
+        <div 
+          *ngFor="let service of servicesContact" 
+          class="service-card"
+          (click)="ouvrirService(service)"
+          [style.border-left-color]="service.couleur"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Voir les détails du service ' + service.nom">
+          
+          <div class="service-header">
+            <div class="service-icon" [style.color]="service.couleur">
+              <i [class]="service.icone"></i>
+            </div>
+            <div class="service-info">
+              <h3>{{service.nom}}</h3>
+              <p class="service-description">{{service.description}}</p>
+            </div>
+          </div>
+
+          <div class="service-contact">
+            <div class="contact-detail">
+              <i class="fas fa-user"></i>
+              <span>{{service.responsable}}</span>
+            </div>
+            <div class="contact-detail">
+              <i class="fas fa-phone"></i>
+              <span>{{service.telephone}}</span>
+            </div>
+            <div class="contact-detail">
+              <i class="fas fa-clock"></i>
+              <span>{{service.horaires}}</span>
+            </div>
+          </div>
+
+          <div class="service-actions">
+            <button class="action-btn" (click)="appelTelephone(service.telephone); $event.stopPropagation()">
+              <i class="fas fa-phone"></i>
+            </button>
+            <button class="action-btn" (click)="envoyerEmail(service.email, 'Demande concernant ' + service.nom); $event.stopPropagation()">
+              <i class="fas fa-envelope"></i>
+            </button>
+            <button class="action-btn" (click)="partagerContact(service); $event.stopPropagation()">
+              <i class="fas fa-share"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglet Personnel -->
+    <div 
+      *ngIf="ongletActif === 'personnel'" 
+      class="tab-content"
+      id="personnel-panel"
+      role="tabpanel"
+      aria-labelledby="personnel-tab">
+      
+      <div class="section-header">
+        <h2>Personnel municipal</h2>
+        <p>Rencontrez l'équipe qui œuvre pour Sicap Liberté</p>
+      </div>
+
+      <div class="personnel-grid">
+        <div 
+          *ngFor="let personne of personnelMairie" 
+          class="personnel-card"
+          (click)="ouvrirPersonnel(personne)"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Voir les détails de ' + personne.prenom + ' ' + personne.nom">
+          
+          <div class="personnel-photo">
+            <img 
+              *ngIf="personne.photo; else defaultAvatar" 
+              [src]="personne.photo" 
+              [alt]="'Photo de ' + personne.prenom + ' ' + personne.nom">
+            <ng-template #defaultAvatar>
+              <div class="default-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="personnel-info">
+            <h3>{{personne.prenom}} {{personne.nom}}</h3>
+            <p class="personnel-poste">{{personne.poste}}</p>
+            <p class="personnel-service">{{personne.service}}</p>
+          </div>
+
+          <div class="personnel-contact" *ngIf="personne.telephone || personne.email">
+            <button 
+              *ngIf="personne.telephone" 
+              class="contact-btn"
+              (click)="appelTelephone(personne.telephone!); $event.stopPropagation()"
+              [attr.aria-label]="'Appeler ' + personne.prenom + ' ' + personne.nom">
+              <i class="fas fa-phone"></i>
+            </button>
+            <button 
+              *ngIf="personne.email" 
+              class="contact-btn"
+              (click)="envoyerEmail(personne.email!, 'Contact depuis le site web'); $event.stopPropagation()"
+              [attr.aria-label]="'Envoyer un email à ' + personne.prenom + ' ' + personne.nom">
+              <i class="fas fa-envelope"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglet Informations pratiques -->
+    <div 
+      *ngIf="ongletActif === 'infos'" 
+      class="tab-content"
+      id="infos-panel"
+      role="tabpanel"
+      aria-labelledby="infos-tab">
+      
+      <div class="section-header">
+        <h2>Informations pratiques</h2>
+        <p>Horaires, accès et informations utiles</p>
+      </div>
+
+      <div class="infos-container">
+        <!-- Horaires d'ouverture -->
+        <div class="info-card">
+          <h3><i class="fas fa-clock"></i> Horaires d'ouverture</h3>
+          <div class="horaires-list">
+            <div 
+              *ngFor="let horaire of horairesOuverture" 
+              class="horaire-item"
+              [class.aujourd-hui]="horaire.jour === getJourActuel()"
+              [class.ferme]="horaire.ferme">
+              
+              <div class="jour">
+                <strong>{{horaire.jour}}</strong>
+                <span *ngIf="horaire.jour === getJourActuel()" class="badge-aujourd-hui">Aujourd'hui</span>
+              </div>
+              <div class="heures">
+                <span *ngIf="!horaire.ferme">{{horaire.matin}}</span>
+                <span *ngIf="!horaire.ferme && horaire.apres_midi !== 'Fermé'"> | {{horaire.apres_midi}}</span>
+                <span *ngIf="horaire.ferme" class="ferme-text">Fermé</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accès et transport -->
+        <div class="info-card">
+          <h3><i class="fas fa-map-marker-alt"></i> Accès et transport</h3>
+          <div class="acces-info">
+            <div class="acces-item">
+              <i class="fas fa-bus"></i>
+              <div>
+                <strong>Transport en commun</strong>
+                <p>Lignes de bus : 8, 15, 23<br>Arrêt : Sicap Liberté Mairie</p>
+              </div>
+            </div>
+            <div class="acces-item">
+              <i class="fas fa-car"></i>
+              <div>
+                <strong>En voiture</strong>
+                <p>Parking gratuit disponible<br>Accès par l'Avenue Principale</p>
+              </div>
+            </div>
+            <div class="acces-item">
+              <i class="fas fa-wheelchair"></i>
+              <div>
+                <strong>Accessibilité</strong>
+                <p>Bâtiment accessible PMR<br>Ascenseur et rampes d'accès</p>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-outline" (click)="ouvrirPlan()">
+            <i class="fas fa-map"></i>
+            Voir sur la carte
+          </button>
+        </div>
+
+        <!-- Urgences -->
+        <div class="info-card urgences">
+          <h3><i class="fas fa-exclamation-triangle"></i> Numéros d'urgence</h3>
+          <div class="urgences-list">
+            <div class="urgence-item">
+              <div class="urgence-numero">18</div>
+              <div class="urgence-info">
+                <strong>Pompiers</strong>
+                <p>Incendies, accidents</p>
+              </div>
+            </div>
+            <div class="urgence-item">
+              <div class="urgence-numero">17</div>
+              <div class="urgence-info">
+                <strong>Police</strong>
+                <p>Sécurité, ordre public</p>
+              </div>
+            </div>
+            <div class="urgence-item">
+              <div class="urgence-numero">15</div>
+              <div class="urgence-info">
+                <strong>SAMU</strong>
+                <p>Urgences médicales</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal détail service -->
+<div *ngIf="serviceSelectionne" class="modal-overlay" (click)="fermerService()">
+  <div class="modal" (click)="$event.stopPropagation()" role="dialog" [attr.aria-labelledby]="'service-modal-title'">
+    <div class="modal-header">
+      <div class="modal-title">
+        <h2 id="service-modal-title">
+          <i [class]="serviceSelectionne.icone" [style.color]="serviceSelectionne.couleur"></i>
+          {{serviceSelectionne.nom}}
+        </h2>
+        <p>{{serviceSelectionne.description}}</p>
+      </div>
+      <button class="close-btn" (click)="fermerService()" aria-label="Fermer">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-content">
+      <div class="service-details">
+        <div class="detail-section">
+          <h4><i class="fas fa-user"></i> Responsable</h4>
+          <p>{{serviceSelectionne.responsable}}</p>
+        </div>
+
+        <div class="detail-section">
+          <h4><i class="fas fa-map-marker-alt"></i> Localisation</h4>
+          <p>{{serviceSelectionne.adresse}}</p>
+        </div>
+
+        <div class="contact-actions">
+          <button class="btn btn-primary" (click)="appelTelephone(serviceSelectionne.telephone)">
+            <i class="fas fa-phone"></i>
+            {{serviceSelectionne.telephone}}
+          </button>
+          <button class="btn btn-secondary" (click)="envoyerEmail(serviceSelectionne.email, 'Demande concernant ' + serviceSelectionne.nom)">
+            <i class="fas fa-envelope"></i>
+            {{serviceSelectionne.email}}
+          </button>
+        </div>
+
+        <div class="horaires-detail">
+          <h4><i class="fas fa-clock"></i> Horaires</h4>
+          <p>{{serviceSelectionne.horaires}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal détail personnel -->
+<div *ngIf="personnelSelectionne" class="modal-overlay" (click)="fermerPersonnel()">
+  <div class="modal" (click)="$event.stopPropagation()" role="dialog" [attr.aria-labelledby]="'personnel-modal-title'">
+    <div class="modal-header">
+      <div class="modal-title">
+        <h2 id="personnel-modal-title">{{personnelSelectionne.prenom}} {{personnelSelectionne.nom}}</h2>
+        <p>{{personnelSelectionne.poste}} - {{personnelSelectionne.service}}</p>
+      </div>
+      <button class="close-btn" (click)="fermerPersonnel()" aria-label="Fermer">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-content">
+      <div class="personnel-details">
+        <div class="personnel-photo-large">
+          <img 
+            *ngIf="personnelSelectionne.photo; else defaultAvatarLarge" 
+            [src]="personnelSelectionne.photo" 
+            [alt]="'Photo de ' + personnelSelectionne.prenom + ' ' + personnelSelectionne.nom">
+          <ng-template #defaultAvatarLarge>
+            <div class="default-avatar-large">
+              <i class="fas fa-user"></i>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="personnel-info-detail">
+          <div *ngIf="personnelSelectionne.biographie" class="biographie">
+            <h4><i class="fas fa-info-circle"></i> Biographie</h4>
+            <p>{{personnelSelectionne.biographie}}</p>
+          </div>
+
+          <div class="contact-info" *ngIf="personnelSelectionne.telephone || personnelSelectionne.email">
+            <h4><i class="fas fa-phone"></i> Contact</h4>
+            <div class="contact-actions">
+              <button 
+                *ngIf="personnelSelectionne.telephone" 
+                class="btn btn-primary" 
+                (click)="appelTelephone(personnelSelectionne.telephone!)">
+                <i class="fas fa-phone"></i>
+                {{personnelSelectionne.telephone}}
+              </button>
+              <button 
+                *ngIf="personnelSelectionne.email" 
+                class="btn btn-secondary" 
+                (click)="envoyerEmail(personnelSelectionne.email!, 'Contact depuis le site web')">
+                <i class="fas fa-envelope"></i>
+                {{personnelSelectionne.email}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer réutilisable -->
+<app-footer></app-footer>

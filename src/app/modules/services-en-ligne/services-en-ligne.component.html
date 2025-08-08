@@ -1,0 +1,293 @@
+<!-- Header réutilisable -->
+<app-header></app-header>
+
+<!-- Bannière de la page -->
+<section class="page-banner">
+  <div class="container">
+    <h1>Services en ligne</h1>
+    <p>Effectuez vos démarches administratives en ligne, 24h/24 et 7j/7</p>
+  </div>
+</section>
+
+<!-- Navigation des onglets -->
+<section class="tabs-navigation">
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-button" 
+              [class.active]="activeTab === 'demande-acte'"
+              (click)="changerOnglet('demande-acte')">
+        <i class="fas fa-file-alt"></i>
+        Demande d'actes
+      </button>
+      <button class="tab-button" 
+              [class.active]="activeTab === 'rendez-vous'"
+              (click)="changerOnglet('rendez-vous')">
+        <i class="fas fa-calendar-check"></i>
+        Rendez-vous
+      </button>
+      <button class="tab-button" 
+              [class.active]="activeTab === 'suivi-dossier'"
+              (click)="changerOnglet('suivi-dossier')">
+        <i class="fas fa-search"></i>
+        Suivi de dossier
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Message de confirmation -->
+<div class="confirmation-overlay" *ngIf="showConfirmation" (click)="fermerConfirmation()">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="confirmation-header">
+      <i class="fas fa-check-circle"></i>
+      <h3>Confirmation</h3>
+    </div>
+    <p>{{ confirmationMessage }}</p>
+    <button class="btn btn-primary" (click)="fermerConfirmation()">Fermer</button>
+  </div>
+</div>
+
+<!-- Contenu des onglets -->
+<section class="tab-content">
+  <div class="container">
+    
+    <!-- Onglet Demande d'actes -->
+    <div class="tab-panel" *ngIf="activeTab === 'demande-acte'">
+      <h2>Demande d'actes d'état civil</h2>
+      
+      <!-- Sélection du service -->
+      <div class="services-grid">
+        <div class="service-card" 
+             *ngFor="let service of servicesDisponibles"
+             [class.selected]="serviceSelectionne === service.id"
+             (click)="selectionnerService(service.id)">
+          <div class="service-icon">
+            <i [class]="service.icon"></i>
+          </div>
+          <h3>{{ service.titre }}</h3>
+          <p>{{ service.description }}</p>
+          <div class="service-info">
+            <span class="delai">Délai: {{ service.delai }}</span>
+            <span class="prix">{{ service.prix }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulaire de demande -->
+      <form [formGroup]="demandeActeForm" (ngSubmit)="soumettreDemandeActe()" class="demande-form" *ngIf="serviceSelectionne">
+        <h3>Informations du demandeur</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nom">Nom *</label>
+            <input type="text" id="nom" formControlName="nom" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="prenom">Prénom *</label>
+            <input type="text" id="prenom" formControlName="prenom" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dateNaissance">Date de naissance *</label>
+            <input type="date" id="dateNaissance" formControlName="dateNaissance" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="lieuNaissance">Lieu de naissance *</label>
+            <input type="text" id="lieuNaissance" formControlName="lieuNaissance" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nomPere">Nom du père</label>
+            <input type="text" id="nomPere" formControlName="nomPere" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="nomMere">Nom de la mère</label>
+            <input type="text" id="nomMere" formControlName="nomMere" class="form-control">
+          </div>
+        </div>
+
+        <h3>Informations de contact</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" formControlName="email" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="telephone">Téléphone *</label>
+            <input type="tel" id="telephone" formControlName="telephone" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="adresse">Adresse *</label>
+          <textarea id="adresse" formControlName="adresse" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="nombreCopies">Nombre de copies *</label>
+          <select id="nombreCopies" formControlName="nombreCopies" class="form-control">
+            <option value="1">1 copie</option>
+            <option value="2">2 copies</option>
+            <option value="3">3 copies</option>
+            <option value="4">4 copies</option>
+            <option value="5">5 copies</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="!demandeActeForm.valid">
+            Soumettre la demande
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="serviceSelectionne = ''">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Onglet Rendez-vous -->
+    <div class="tab-panel" *ngIf="activeTab === 'rendez-vous'">
+      <h2>Prendre un rendez-vous</h2>
+      
+      <form [formGroup]="rendezVousForm" (ngSubmit)="soumettreRendezVous()" class="rendez-vous-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="typeRendezVous">Type de rendez-vous *</label>
+            <select id="typeRendezVous" formControlName="typeRendezVous" class="form-control">
+              <option value="">Sélectionnez un type</option>
+              <option *ngFor="let type of typesRendezVous" [value]="type.id">
+                {{ type.nom }} ({{ type.duree }})
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nomRdv">Nom *</label>
+            <input type="text" id="nomRdv" formControlName="nom" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="prenomRdv">Prénom *</label>
+            <input type="text" id="prenomRdv" formControlName="prenom" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="emailRdv">Email *</label>
+            <input type="email" id="emailRdv" formControlName="email" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="telephoneRdv">Téléphone *</label>
+            <input type="tel" id="telephoneRdv" formControlName="telephone" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dateRendezVous">Date souhaitée *</label>
+            <select id="dateRendezVous" formControlName="dateRendezVous" class="form-control">
+              <option value="">Sélectionnez une date</option>
+              <option *ngFor="let creneau of creneauxDisponibles" [value]="creneau.date">
+                {{ creneau.date | date:'EEEE dd MMMM yyyy':'fr' }}
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="heureRendezVous">Heure *</label>
+            <select id="heureRendezVous" formControlName="heureRendezVous" class="form-control">
+              <option value="">Sélectionnez une heure</option>
+              <option *ngFor="let heure of getHeuresDisponibles(rendezVousForm.get('dateRendezVous')?.value)" [value]="heure">
+                {{ heure }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="motif">Motif du rendez-vous *</label>
+          <textarea id="motif" formControlName="motif" class="form-control" rows="4" 
+                    placeholder="Décrivez brièvement l'objet de votre rendez-vous"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="!rendezVousForm.valid">
+            Confirmer le rendez-vous
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Onglet Suivi de dossier -->
+    <div class="tab-panel" *ngIf="activeTab === 'suivi-dossier'">
+      <h2>Suivre votre dossier</h2>
+      
+      <div class="suivi-info">
+        <p>Entrez votre numéro de dossier et votre email pour consulter l'état d'avancement de votre demande.</p>
+      </div>
+
+      <form [formGroup]="suiviDossierForm" (ngSubmit)="suivreDossier()" class="suivi-form">
+        <div class="form-group">
+          <label for="numeroDossier">Numéro de dossier *</label>
+          <input type="text" id="numeroDossier" formControlName="numeroDossier" 
+                 class="form-control" placeholder="Ex: SL2024-001234">
+        </div>
+
+        <div class="form-group">
+          <label for="emailSuivi">Email *</label>
+          <input type="email" id="emailSuivi" formControlName="email" 
+                 class="form-control" placeholder="votre.email@exemple.com">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="!suiviDossierForm.valid">
+            Consulter le dossier
+          </button>
+        </div>
+      </form>
+
+      <!-- Informations utiles -->
+      <div class="info-section">
+        <h3>Informations utiles</h3>
+        <div class="info-cards">
+          <div class="info-card">
+            <i class="fas fa-clock"></i>
+            <h4>Délais de traitement</h4>
+            <ul>
+              <li>Actes d'état civil : 24-48h</li>
+              <li>Certificats : 24h</li>
+              <li>Permis de construire : 30 jours</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <i class="fas fa-credit-card"></i>
+            <h4>Modes de paiement</h4>
+            <ul>
+              <li>Espèces (sur place)</li>
+              <li>Mobile Money</li>
+              <li>Virement bancaire</li>
+            </ul>
+          </div>
+          <div class="info-card">
+            <i class="fas fa-download"></i>
+            <h4>Retrait des documents</h4>
+            <ul>
+              <li>Sur place avec pièce d'identité</li>
+              <li>Par procuration</li>
+              <li>Envoi postal (frais en sus)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer réutilisable -->
+<app-footer></app-footer>

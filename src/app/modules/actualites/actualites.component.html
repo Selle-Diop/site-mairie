@@ -1,0 +1,321 @@
+<!-- Header réutilisable -->
+<app-header></app-header>
+
+<!-- Bannière de la page -->
+<section class="page-banner">
+  <div class="container">
+    <h1>Actualités de la Commune</h1>
+    <p>Restez informé des dernières nouvelles et événements de Sicap Liberté</p>
+  </div>
+</section>
+
+<!-- Actualités urgentes -->
+<section class="actualites-urgentes" *ngIf="actualitesUrgentes.length > 0">
+  <div class="container">
+    <h2>🚨 Actualités urgentes</h2>
+    <div class="urgentes-grid">
+      <div class="urgente-card" *ngFor="let article of actualitesUrgentes" (click)="selectionnerArticle(article)">
+        <div class="urgente-badge">URGENT</div>
+        <h3>{{ article.titre }}</h3>
+        <p>{{ article.resume }}</p>
+        <div class="urgente-meta">
+          <span class="date">{{ tempsEcoule(article.datePublication) }}</span>
+          <span class="vues">{{ article.vues }} vues</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filtres et recherche -->
+<section class="filtres-section">
+  <div class="container">
+    <div class="filtres-header">
+      <div class="search-bar">
+        <div class="search-input-group">
+          <i class="fas fa-search"></i>
+          <input type="text" 
+                 [(ngModel)]="rechercheTexte" 
+                 placeholder="Rechercher dans les actualités..." 
+                 class="search-input">
+        </div>
+      </div>
+      
+      <div class="view-controls">
+        <button class="view-btn" 
+                [class.active]="affichage === 'grille'"
+                (click)="changerAffichage('grille')">
+          <i class="fas fa-th"></i>
+        </button>
+        <button class="view-btn" 
+                [class.active]="affichage === 'liste'"
+                (click)="changerAffichage('liste')">
+          <i class="fas fa-list"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtres par catégorie -->
+    <div class="categories-filter">
+      <button class="category-btn" 
+              *ngFor="let categorie of categories"
+              [class.active]="categorieSelectionnee === categorie.id"
+              [style.border-color]="categorieSelectionnee === categorie.id ? categorie.couleur : '#ddd'"
+              [style.color]="categorieSelectionnee === categorie.id ? categorie.couleur : '#666'"
+              (click)="changerCategorie(categorie.id)">
+        {{ categorie.nom }}
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Liste des actualités -->
+<section class="actualites-section">
+  <div class="container">
+    <div class="actualites-header">
+  <h2>
+    {{ actualitesFiltrees.length }} 
+    {{ actualitesFiltrees.length > 1 ? 'actualités' : 'actualité' }}
+    {{ categorieSelectionnee !== 'toutes' ? 'dans ' + getNomCategorie(categorieSelectionnee) : '' }}
+  </h2>
+</div>
+
+    <!-- Affichage grille -->
+    <div class="actualites-grid" *ngIf="affichage === 'grille'">
+      <article class="actualite-card" *ngFor="let article of actualitesAffichees" (click)="selectionnerArticle(article)">
+        <div class="card-image">
+          <img [src]="article.image" [alt]="article.titre" loading="lazy">
+          <div class="card-badges">
+            <span class="category-badge" [style.background-color]="getCouleurCategorie(article.categorie)">
+              {{ article.categorie }}
+            </span>
+            <span class="urgent-badge" *ngIf="article.urgent">URGENT</span>
+            <span class="event-badge" *ngIf="estEnCours(article)">EN COURS</span>
+            <span class="upcoming-badge" *ngIf="estAVenir(article)">À VENIR</span>
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <h3>{{ article.titre }}</h3>
+          <p class="resume">{{ article.resume }}</p>
+          
+          <div class="card-meta">
+            <div class="meta-left">
+              <span class="date">{{ tempsEcoule(article.datePublication) }}</span>
+              <span class="author">Par {{ article.auteur }}</span>
+            </div>
+            <div class="meta-right">
+              <span class="vues">
+                <i class="fas fa-eye"></i>
+                {{ article.vues }}
+              </span>
+              <span class="partages">
+                <i class="fas fa-share"></i>
+                {{ article.partages }}
+              </span>
+            </div>
+          </div>
+
+          <div class="card-tags">
+            <span class="tag" *ngFor="let tag of article.tags.slice(0, 3)">
+              #{{ tag }}
+            </span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Affichage liste -->
+    <div class="actualites-list" *ngIf="affichage === 'liste'">
+      <article class="actualite-item" *ngFor="let article of actualitesAffichees" (click)="selectionnerArticle(article)">
+        <div class="item-image">
+          <img [src]="article.image" [alt]="article.titre" loading="lazy">
+        </div>
+        
+        <div class="item-content">
+          <div class="item-header">
+            <div class="item-badges">
+              <span class="category-badge" [style.background-color]="getCouleurCategorie(article.categorie)">
+                {{ article.categorie }}
+              </span>
+              <span class="urgent-badge" *ngIf="article.urgent">URGENT</span>
+            </div>
+            <div class="item-meta">
+              <span class="date">{{ tempsEcoule(article.datePublication) }}</span>
+              <span class="stats">{{ article.vues }} vues • {{ article.partages }} partages</span>
+            </div>
+          </div>
+          
+          <h3>{{ article.titre }}</h3>
+          <p class="resume">{{ article.resume }}</p>
+          
+          <div class="item-footer">
+            <div class="tags">
+              <span class="tag" *ngFor="let tag of article.tags.slice(0, 4)">
+                #{{ tag }}
+              </span>
+            </div>
+            <span class="author">Par {{ article.auteur }}</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Message si aucun résultat -->
+    <div class="no-results" *ngIf="actualitesFiltrees.length === 0">
+      <i class="fas fa-search"></i>
+      <h3>Aucune actualité trouvée</h3>
+      <p>Essayez de modifier vos critères de recherche ou de sélectionner une autre catégorie.</p>
+      <button class="btn btn-primary" (click)="categorieSelectionnee = 'toutes'; rechercheTexte = ''">
+        Voir toutes les actualités
+      </button>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="nombrePages > 1">
+      <button class="page-btn" 
+              [disabled]="pageActuelle === 1"
+              (click)="changerPage(pageActuelle - 1)">
+        <i class="fas fa-chevron-left"></i>
+        Précédent
+      </button>
+      
+      <div class="page-numbers">
+        <button class="page-number" 
+                *ngFor="let page of [].constructor(nombrePages); let i = index"
+                [class.active]="pageActuelle === i + 1"
+                (click)="changerPage(i + 1)">
+          {{ i + 1 }}
+        </button>
+      </div>
+      
+      <button class="page-btn" 
+              [disabled]="pageActuelle === nombrePages"
+              (click)="changerPage(pageActuelle + 1)">
+        Suivant
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de détails de l'article -->
+<div class="article-modal-overlay" *ngIf="articleSelectionne" (click)="fermerDetails()">
+  <div class="article-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-badges">
+        <span class="category-badge" [style.background-color]="getCouleurCategorie(articleSelectionne.categorie)">
+          {{ articleSelectionne.categorie }}
+        </span>
+        <span class="urgent-badge" *ngIf="articleSelectionne.urgent">URGENT</span>
+      </div>
+      <button class="close-btn" (click)="fermerDetails()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      <div class="article-image">
+        <img [src]="articleSelectionne.image" [alt]="articleSelectionne.titre">
+      </div>
+
+      <div class="article-header">
+        <h1>{{ articleSelectionne.titre }}</h1>
+        <div class="article-meta">
+          <div class="meta-left">
+            <span class="date">Publié {{ formaterDate(articleSelectionne.datePublication) }}</span>
+            <span class="author">Par {{ articleSelectionne.auteur }}</span>
+            <span class="event-date" *ngIf="articleSelectionne.dateEvenement">
+              Événement : {{ formaterDate(articleSelectionne.dateEvenement) }}
+              <span *ngIf="articleSelectionne.dateFinEvenement">
+                au {{ formaterDate(articleSelectionne.dateFinEvenement) }}
+              </span>
+            </span>
+          </div>
+          <div class="meta-right">
+            <span class="vues">
+              <i class="fas fa-eye"></i>
+              {{ articleSelectionne.vues }} vues
+            </span>
+            <span class="partages">
+              <i class="fas fa-share"></i>
+              {{ articleSelectionne.partages }} partages
+            </span>
+            <span class="commentaires">
+              <i class="fas fa-comments"></i>
+              {{ articleSelectionne.commentaires }} commentaires
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="article-content">
+        <div class="resume">
+          <strong>{{ articleSelectionne.resume }}</strong>
+        </div>
+        <div class="contenu" [innerHTML]="getContenuFormate(articleSelectionne?.contenu)"></div>
+      </div>
+
+      <div class="article-tags">
+        <h4>Tags :</h4>
+        <div class="tags-list">
+          <span class="tag" *ngFor="let tag of articleSelectionne.tags">
+            #{{ tag }}
+          </span>
+        </div>
+      </div>
+
+      <div class="article-gallery" *ngIf="articleSelectionne.galerie && articleSelectionne.galerie.length > 0">
+        <h4>Galerie photos :</h4>
+        <div class="gallery-grid">
+          <img *ngFor="let photo of articleSelectionne.galerie" 
+               [src]="photo" 
+               [alt]="articleSelectionne.titre"
+               class="gallery-image">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <div class="share-buttons">
+        <h4>Partager :</h4>
+        <button class="share-btn facebook" (click)="partagerArticle(articleSelectionne, 'facebook')">
+          <i class="fab fa-facebook"></i>
+          Facebook
+        </button>
+        <button class="share-btn twitter" (click)="partagerArticle(articleSelectionne, 'twitter')">
+          <i class="fab fa-twitter"></i>
+          Twitter
+        </button>
+        <button class="share-btn whatsapp" (click)="partagerArticle(articleSelectionne, 'whatsapp')">
+          <i class="fab fa-whatsapp"></i>
+          WhatsApp
+        </button>
+        <button class="share-btn email" (click)="partagerArticle(articleSelectionne, 'email')">
+          <i class="fas fa-envelope"></i>
+          Email
+        </button>
+      </div>
+      <button class="btn btn-secondary" (click)="fermerDetails()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Section newsletter -->
+<section class="newsletter-section">
+  <div class="container">
+    <div class="newsletter-content">
+      <div class="newsletter-text">
+        <h3>Restez informé</h3>
+        <p>Inscrivez-vous à notre newsletter pour recevoir les dernières actualités de Sicap Liberté directement dans votre boîte email.</p>
+      </div>
+      <div class="newsletter-form">
+        <input type="email" placeholder="Votre adresse email" class="newsletter-input">
+        <button type="button" class="btn btn-primary">S'abonner</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer réutilisable -->
+<app-footer></app-footer>

@@ -1,0 +1,386 @@
+<!-- Header réutilisable -->
+<app-header></app-header>
+
+<!-- Bannière de la page -->
+<section class="page-banner">
+  <div class="container">
+    <h1>Transparence & Budget</h1>
+    <p>Découvrez comment vos impôts sont utilisés et participez aux décisions budgétaires</p>
+  </div>
+</section>
+
+<!-- Navigation des onglets -->
+<section class="tabs-section">
+  <div class="container">
+    <div class="tabs-navigation">
+      <button class="tab-btn" 
+              [class.active]="ongletActif === 'projets'"
+              (click)="changerOnglet('projets')">
+        <i class="fas fa-project-diagram"></i>
+        Projets financés
+        <span class="badge">{{ projetsFinances.length }}</span>
+      </button>
+      <button class="tab-btn" 
+              [class.active]="ongletActif === 'budget-participatif'"
+              (click)="changerOnglet('budget-participatif')">
+        <i class="fas fa-users"></i>
+        Budget participatif
+      </button>
+      <button class="tab-btn" 
+              [class.active]="ongletActif === 'appels-offres'"
+              (click)="changerOnglet('appels-offres')">
+        <i class="fas fa-gavel"></i>
+        Appels d'offres
+        <span class="badge">{{ appelsOffresOuverts.length }}</span>
+      </button>
+      <button class="tab-btn" 
+              [class.active]="ongletActif === 'budget'"
+              (click)="changerOnglet('budget')">
+        <i class="fas fa-chart-pie"></i>
+        Budget communal
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Contenu des onglets -->
+<section class="content-section">
+  <div class="container">
+    
+    <!-- Onglet Projets financés -->
+    <div class="tab-content" *ngIf="ongletActif === 'projets'">
+      <div class="section-header">
+        <h2>Projets financés par la commune</h2>
+        <p>Suivez l'avancement des projets d'investissement et leur impact sur votre quotidien</p>
+      </div>
+
+      <!-- Filtres -->
+      <div class="filtres-bar">
+        <div class="filtres-group">
+          <select [(ngModel)]="filtreStatutProjet" class="filtre-select">
+            <option value="tous">Tous les statuts</option>
+            <option value="planifie">Planifié</option>
+            <option value="en_cours">En cours</option>
+            <option value="termine">Terminé</option>
+            <option value="suspendu">Suspendu</option>
+          </select>
+          
+          <select [(ngModel)]="filtreCategorieProjet" class="filtre-select">
+            <option value="toutes">Toutes catégories</option>
+            <option *ngFor="let cat of categoriesProjets" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+        
+        <button class="reset-btn" (click)="resetFiltres()">
+          <i class="fas fa-undo"></i>
+          Réinitialiser
+        </button>
+      </div>
+
+      <!-- Liste des projets -->
+      <div class="projets-grid">
+        <div class="projet-card" *ngFor="let projet of projetsAffiches" (click)="ouvrirProjet(projet)">
+          <div class="card-header">
+            <div class="card-badges">
+              <span class="category-badge">{{ projet.categorie }}</span>
+              <span class="statut-badge" [style.background-color]="getStatutCouleur(projet.statut)">
+                {{ getStatutLabel(projet.statut) }}
+              </span>
+            </div>
+            <div class="budget-info">
+              <span class="budget-total">{{ formaterMontant(projet.budget) }}</span>
+              <span class="budget-utilise">{{ formaterMontant(projet.budgetUtilise) }} utilisés</span>
+            </div>
+          </div>
+          
+          <div class="card-content">
+            <h3>{{ projet.titre }}</h3>
+            <p class="description">{{ projet.description }}</p>
+            
+            <div class="progress-section">
+              <div class="progress-header">
+                <span>Avancement budgétaire</span>
+                <span class="progress-percentage">{{ getPourcentageAvancement(projet) }}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="getPourcentageAvancement(projet)"></div>
+              </div>
+            </div>
+
+            <div class="projet-meta">
+              <div class="meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>{{ formaterDate(projet.dateDebut) }} - {{ formaterDate(projet.dateFin) }}</span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-user-tie"></i>
+                <span>{{ projet.responsable }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-footer">
+            <button class="voir-details-btn">
+              <i class="fas fa-eye"></i>
+              Voir détails
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglet Budget participatif -->
+    <div class="tab-content" *ngIf="ongletActif === 'budget-participatif'">
+      <div class="section-header">
+        <h2>Budget Participatif</h2>
+        <p>Les habitants décident ensemble des projets à financer dans leur commune</p>
+      </div>
+
+      <!-- Informations générales -->
+      <div class="budget-participatif-info">
+        <div class="bp-header">
+          <div class="bp-title">
+            <h3>{{ budgetParticipatif.titre }}</h3>
+            <span class="bp-statut" [style.background-color]="getStatutCouleur(budgetParticipatif.statut)">
+              {{ getStatutLabel(budgetParticipatif.statut) }}
+            </span>
+          </div>
+          <p class="bp-description">{{ budgetParticipatif.description }}</p>
+        </div>
+
+        <div class="bp-stats">
+          <div class="bp-stat">
+            <div class="bp-stat-icon">
+              <i class="fas fa-euro-sign"></i>
+            </div>
+            <div class="bp-stat-content">
+              <h4>{{ formaterMontant(budgetParticipatif.budgetTotal) }}</h4>
+              <p>Budget total</p>
+            </div>
+          </div>
+          <div class="bp-stat">
+            <div class="bp-stat-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="bp-stat-content">
+              <h4>{{ budgetParticipatif.nombreVotants }}</h4>
+              <p>Citoyens participants</p>
+            </div>
+          </div>
+          <div class="bp-stat">
+            <div class="bp-stat-icon">
+              <i class="fas fa-project-diagram"></i>
+            </div>
+            <div class="bp-stat-content">
+              <h4>{{ budgetParticipatif.projetsSelectionnes.length }}</h4>
+              <p>Projets sélectionnés</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Projets sélectionnés -->
+      <div class="projets-selectionnes">
+        <h3>Projets sélectionnés par les citoyens</h3>
+        <div class="projets-bp-grid">
+          <div class="projet-bp-card" *ngFor="let projet of budgetParticipatif.projetsSelectionnes">
+            <div class="bp-card-header">
+              <div class="bp-badges">
+                <span class="quartier-badge">{{ projet.quartier }}</span>
+                <span class="category-badge">{{ projet.categorie }}</span>
+              </div>
+              <div class="votes-info">
+                <i class="fas fa-thumbs-up"></i>
+                <span>{{ projet.votes }} votes</span>
+              </div>
+            </div>
+            
+            <div class="bp-card-content">
+              <h4>{{ projet.titre }}</h4>
+              <p>{{ projet.description }}</p>
+              <div class="budget-bp">
+                <i class="fas fa-euro-sign"></i>
+                <span>{{ formaterMontant(projet.budget) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglet Appels d'offres -->
+    <div class="tab-content" *ngIf="ongletActif === 'appels-offres'">
+      <div class="section-header">
+        <h2>Appels d'offres publics</h2>
+        <p>Consultez les marchés publics en cours et les attributions récentes</p>
+      </div>
+
+      <!-- Appels d'offres ouverts -->
+      <div class="ao-section" *ngIf="appelsOffresOuverts.length > 0">
+        <h3>Appels d'offres ouverts</h3>
+        <div class="ao-grid">
+          <div class="ao-card ouvert" *ngFor="let ao of appelsOffresOuverts" (click)="ouvrirAppelOffre(ao)">
+            <div class="ao-header">
+              <div class="ao-status">
+                <span class="status-badge ouvert">{{ getStatutLabel(ao.statut) }}</span>
+                <span class="temps-restant">{{ tempsRestant(ao.dateLimite) }}</span>
+              </div>
+              <div class="ao-montant">
+                <span class="montant-label">Budget estimé</span>
+                <span class="montant-value">{{ formaterMontant(ao.montant) }}</span>
+              </div>
+            </div>
+            
+            <div class="ao-content">
+              <h4>{{ ao.titre }}</h4>
+              <p class="ao-description">{{ ao.description }}</p>
+              
+              <div class="ao-dates">
+                <div class="date-item">
+                  <i class="fas fa-calendar-plus"></i>
+                  <span>Publié le {{ formaterDate(ao.datePublication) }}</span>
+                </div>
+                <div class="date-item">
+                  <i class="fas fa-calendar-times"></i>
+                  <span>Date limite : {{ formaterDate(ao.dateLimite) }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="ao-footer">
+              <div class="documents-count">
+                <i class="fas fa-file-alt"></i>
+                {{ ao.documents.length }} documents
+              </div>
+              <button class="consulter-btn">
+                <i class="fas fa-eye"></i>
+                Consulter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglet Budget communal -->
+    <div class="tab-content" *ngIf="ongletActif === 'budget'">
+      <div class="section-header">
+        <h2>Budget communal</h2>
+        <p>Découvrez en détail les recettes et dépenses de votre commune</p>
+      </div>
+
+      <!-- Sélecteur d'année -->
+      <div class="annee-selector">
+        <label for="annee">Année budgétaire :</label>
+        <select id="annee" [(ngModel)]="anneeSelectionnee" class="annee-select">
+          <option *ngFor="let annee of anneesDisponibles" [value]="annee">{{ annee }}</option>
+        </select>
+      </div>
+
+      <!-- Vue d'ensemble -->
+      <div class="budget-overview">
+        <div class="overview-card recettes">
+          <div class="overview-header">
+            <h3>Recettes</h3>
+            <div class="overview-montant">{{ formaterMontant(donneesAnneeSelectionnee.recettes.total) }}</div>
+          </div>
+          <div class="overview-details">
+            <div class="detail-item">
+              <span class="detail-label">Impôts locaux</span>
+              <span class="detail-value">{{ formaterMontant(donneesAnneeSelectionnee.recettes.impots) }}</span>
+              <span class="detail-percent">{{ Math.round(donneesAnneeSelectionnee.recettes.impots / donneesAnneeSelectionnee.recettes.total * 100) }}%</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Dotations État</span>
+              <span class="detail-value">{{ formaterMontant(donneesAnneeSelectionnee.recettes.dotations) }}</span>
+              <span class="detail-percent">{{ Math.round(donneesAnneeSelectionnee.recettes.dotations / donneesAnneeSelectionnee.recettes.total * 100) }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="overview-card depenses">
+          <div class="overview-header">
+            <h3>Dépenses</h3>
+            <div class="overview-montant">{{ formaterMontant(donneesAnneeSelectionnee.depenses.total) }}</div>
+          </div>
+          <div class="overview-details">
+            <div class="detail-item">
+              <span class="detail-label">Personnel</span>
+              <span class="detail-value">{{ formaterMontant(donneesAnneeSelectionnee.depenses.personnel) }}</span>
+              <span class="detail-percent">{{ Math.round(donneesAnneeSelectionnee.depenses.personnel / donneesAnneeSelectionnee.depenses.total * 100) }}%</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Investissement</span>
+              <span class="detail-value">{{ formaterMontant(donneesAnneeSelectionnee.depenses.investissement) }}</span>
+              <span class="detail-percent">{{ Math.round(donneesAnneeSelectionnee.depenses.investissement / donneesAnneeSelectionnee.depenses.total * 100) }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal détail projet -->
+<div class="modal-overlay" *ngIf="projetSelectionne" (click)="fermerProjet()">
+  <div class="modal projet-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">
+        <h2>{{ projetSelectionne.titre }}</h2>
+        <div class="modal-badges">
+          <span class="category-badge">{{ projetSelectionne.categorie }}</span>
+          <span class="statut-badge" [style.background-color]="getStatutCouleur(projetSelectionne.statut)">
+            {{ getStatutLabel(projetSelectionne.statut) }}
+          </span>
+        </div>
+      </div>
+      <button class="close-btn" (click)="fermerProjet()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      <div class="projet-details">
+        <div class="detail-section">
+          <h4>Description du projet</h4>
+          <p>{{ projetSelectionne.description }}</p>
+        </div>
+
+        <div class="detail-section">
+          <h4>Informations générales</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>Budget total :</strong>
+              <span>{{ formaterMontant(projetSelectionne.budget) }}</span>
+            </div>
+            <div class="info-item">
+              <strong>Budget utilisé :</strong>
+              <span>{{ formaterMontant(projetSelectionne.budgetUtilise) }}</span>
+            </div>
+            <div class="info-item">
+              <strong>Date de début :</strong>
+              <span>{{ formaterDate(projetSelectionne.dateDebut) }}</span>
+            </div>
+            <div class="info-item">
+              <strong>Date de fin :</strong>
+              <span>{{ formaterDate(projetSelectionne.dateFin) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h4>Objectifs du projet</h4>
+          <ul class="objectifs-list">
+            <li *ngFor="let objectif of projetSelectionne.objectifs">
+              <i class="fas fa-check-circle"></i>
+              {{ objectif }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer réutilisable -->
+<app-footer></app-footer>

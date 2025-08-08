@@ -1,0 +1,406 @@
+<!-- Header réutilisable -->
+<app-header></app-header>
+
+<!-- Bannière de la page -->
+<section class="page-banner">
+  <div class="container">
+    <h1>Démarches Administratives</h1>
+    <p>Trouvez toutes les informations pour vos démarches en ligne</p>
+  </div>
+</section>
+
+<!-- Guide rapide -->
+<section class="guide-rapide">
+  <div class="container">
+    <div class="guide-content">
+      <div class="guide-text">
+        <h2>🚀 Simplifiez vos démarches</h2>
+        <p>Découvrez nos guides détaillés pour réaliser vos démarches administratives en toute simplicité.</p>
+      </div>
+      <div class="guide-stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ demarches.length }}</span>
+          <span class="stat-label">Démarches</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ categories.length - 1 }}</span>
+          <span class="stat-label">Catégories</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Filtres et recherche -->
+<section class="filtres-section">
+  <div class="container">
+    <div class="filtres-header">
+      <div class="search-bar">
+        <div class="search-input-group">
+          <i class="fas fa-search"></i>
+          <input type="text" 
+                 [(ngModel)]="rechercheTexte" 
+                 placeholder="Rechercher une démarche..." 
+                 class="search-input">
+        </div>
+      </div>
+      
+      <div class="filtres-controls">
+        <select [(ngModel)]="difficulteSelectionnee" class="filtre-select">
+          <option value="toutes">Toutes difficultés</option>
+          <option value="facile">Facile</option>
+          <option value="moyenne">Moyenne</option>
+          <option value="difficile">Difficile</option>
+        </select>
+        
+        <select [(ngModel)]="triPar" class="filtre-select">
+          <option value="titre">Trier par titre</option>
+          <option value="difficulte">Trier par difficulté</option>
+          <option value="duree">Trier par durée</option>
+        </select>
+        
+        <button class="reset-btn" (click)="resetFiltres()" title="Réinitialiser les filtres">
+          <i class="fas fa-undo"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtres par catégorie -->
+    <div class="categories-filter">
+      <button class="category-btn" 
+              *ngFor="let categorie of categories"
+              [class.active]="categorieSelectionnee === categorie.id"
+              [style.border-color]="categorieSelectionnee === categorie.id ? categorie.couleur : '#ddd'"
+              [style.color]="categorieSelectionnee === categorie.id ? categorie.couleur : '#666'"
+              (click)="changerCategorie(categorie.id)">
+        <i [class]="categorie.icone"></i>
+        {{ categorie.nom }}
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Liste des démarches -->
+<section class="demarches-section">
+  <div class="container">
+    <div class="demarches-header">
+      <h2>
+             {{ demarchesFiltrees.length }} 
+        {{ demarchesFiltrees.length > 1 ? 'démarches trouvées' : 'démarche trouvée' }}
+        {{ categorieSelectionnee !== 'toutes' ? 'dans ' + getNomCategorie(categorieSelectionnee) : '' }}
+      </h2>
+    </div>
+
+    <!-- Grille des démarches -->
+    <div class="demarches-grid">
+      <div class="demarche-card" *ngFor="let demarche of demarchesFiltrees" (click)="selectionnerDemarche(demarche)">
+        <!-- <div class="card-header">
+          <div class="card-badges">
+            <span class="category-badge" [style.background-color]="getCouleurCategorie(demarche.categorie)">
+              <i [class]="getIconeCategorie(demarche.categorie)"></i>
+              {{ categories.find(c => c.id === demarche.categorie)?.nom }}
+                
+            </span>
+            <span class="difficulte-badge" [style.background-color]="getDifficulteCouleur(demarche.difficulte)">
+              {{ getDifficulteLabel(demarche.difficulte) }}
+            </span>
+          </div>
+        </div> -->
+<div class="card-header">
+  <div class="card-badges">
+    <span class="category-badge" [style.background-color]="getCouleurCategorie(demarche.categorie)">
+      <i [class]="getIconeCategorie(demarche.categorie)"></i>
+      {{ getNomCategorie(demarche.categorie) }}
+    </span>
+    <span class="difficulte-badge" [style.background-color]="getDifficulteCouleur(demarche.difficulte)">
+      {{ getDifficulteLabel(demarche.difficulte) }}
+    </span>
+  </div>
+</div>
+        <div class="card-content">
+          <h3>{{ demarche.titre }}</h3>
+          <p class="description">{{ demarche.description }}</p>
+
+          <div class="card-infos">
+            <div class="info-item">
+              <i class="fas fa-clock"></i>
+              <span>{{ demarche.duree }}</span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-euro-sign"></i>
+              <span>{{ demarche.cout }}</span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-calendar-alt"></i>
+              <span>{{ demarche.delaiTraitement }}</span>
+            </div>
+          </div>
+
+          <div class="documents-preview">
+            <h4>Documents requis :</h4>
+            <ul>
+              <li *ngFor="let doc of demarche.documentsRequis.slice(0, 3)">{{ doc }}</li>
+              <li *ngIf="demarche.documentsRequis.length > 3" class="more-docs">
+                +{{ demarche.documentsRequis.length - 3 }} autres documents
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="etapes-count">
+            <i class="fas fa-list-ol"></i>
+            {{ demarche.etapes.length }} étapes
+          </div>
+          <button class="voir-details-btn">
+            Voir le guide
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message si aucun résultat -->
+    <div class="no-results" *ngIf="demarchesFiltrees.length === 0">
+      <i class="fas fa-search"></i>
+      <h3>Aucune démarche trouvée</h3>
+      <p>Essayez de modifier vos critères de recherche ou de sélectionner une autre catégorie.</p>
+      <button class="btn btn-primary" (click)="resetFiltres()">
+        Voir toutes les démarches
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de détails de la démarche -->
+<div class="demarche-modal-overlay" *ngIf="demarcheSelectionnee" (click)="fermerDetails()">
+  <div class="demarche-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">
+        <h1>{{ demarcheSelectionnee.titre }}</h1>
+        <div class="modal-badges">
+          <span class="category-badge" [style.background-color]="getCouleurCategorie(demarcheSelectionnee.categorie)">
+            <i [class]="getIconeCategorie(demarcheSelectionnee.categorie)"></i>
+            <!-- {{ categories.find(c => c.id === demarcheSelectionnee.categorie)?.nom }} -->
+              <!-- {{ categorieSelectionnee | categorieNom:categories }} -->
+                
+          </span>
+          <span class="difficulte-badge" [style.background-color]="getDifficulteCouleur(demarcheSelectionnee.difficulte)">
+            {{ getDifficulteLabel(demarcheSelectionnee.difficulte) }}
+          </span>
+        </div>
+      </div>
+      <button class="close-btn" (click)="fermerDetails()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      <!-- Navigation des onglets -->
+      <div class="tabs-navigation">
+        <button class="tab-btn" 
+                [class.active]="etapeActive === 0"
+                (click)="changerEtape(0)">
+          <i class="fas fa-info-circle"></i>
+          Informations
+        </button>
+        <button class="tab-btn" 
+                [class.active]="etapeActive === 1"
+                (click)="changerEtape(1)">
+          <i class="fas fa-list-ol"></i>
+          Étapes ({{ demarcheSelectionnee.etapes.length }})
+        </button>
+        <button class="tab-btn" 
+                [class.active]="etapeActive === 2"
+                (click)="changerEtape(2)">
+          <i class="fas fa-file-download"></i>
+          Formulaires
+        </button>
+        <button class="tab-btn" 
+                [class.active]="etapeActive === 3"
+                (click)="changerEtape(3)">
+          <i class="fas fa-question-circle"></i>
+          FAQ
+        </button>
+      </div>
+
+      <!-- Contenu des onglets -->
+      <div class="tab-content">
+        <!-- Onglet Informations -->
+        <div class="tab-panel" *ngIf="etapeActive === 0">
+          <div class="info-section">
+            <h3>Description</h3>
+            <p>{{ demarcheSelectionnee.description }}</p>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-card">
+              <i class="fas fa-clock"></i>
+              <h4>Durée</h4>
+              <p>{{ demarcheSelectionnee.duree }}</p>
+            </div>
+            <div class="info-card">
+              <i class="fas fa-euro-sign"></i>
+              <h4>Coût</h4>
+              <p>{{ demarcheSelectionnee.cout }}</p>
+            </div>
+            <div class="info-card">
+              <i class="fas fa-calendar-alt"></i>
+              <h4>Délai de traitement</h4>
+              <p>{{ demarcheSelectionnee.delaiTraitement }}</p>
+            </div>
+            <div class="info-card">
+              <i class="fas fa-check-circle"></i>
+              <h4>Validité</h4>
+              <p>{{ demarcheSelectionnee.validite }}</p>
+            </div>
+          </div>
+
+          <div class="documents-section">
+            <h3>Documents requis</h3>
+            <ul class="documents-list">
+              <li *ngFor="let doc of demarcheSelectionnee.documentsRequis">
+                <i class="fas fa-file"></i>
+                {{ doc }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="conseils-section" *ngIf="demarcheSelectionnee.conseils.length > 0">
+            <h3>💡 Conseils pratiques</h3>
+            <ul class="conseils-list">
+              <li *ngFor="let conseil of demarcheSelectionnee.conseils">
+                <i class="fas fa-lightbulb"></i>
+                {{ conseil }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="contact-section">
+            <h3>Contact</h3>
+            <div class="contact-card">
+              <h4>{{ demarcheSelectionnee.contact.service }}</h4>
+              <div class="contact-info">
+                <div class="contact-item">
+                  <i class="fas fa-phone"></i>
+                  <span>{{ demarcheSelectionnee.contact.telephone }}</span>
+                </div>
+                <div class="contact-item">
+                  <i class="fas fa-envelope"></i>
+                  <span>{{ demarcheSelectionnee.contact.email }}</span>
+                </div>
+                <div class="contact-item">
+                  <i class="fas fa-clock"></i>
+                  <span>{{ demarcheSelectionnee.contact.horaires }}</span>
+                </div>
+              </div>
+              <button class="btn btn-primary" (click)="contacterService(demarcheSelectionnee.contact)">
+                Contacter le service
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Onglet Étapes -->
+        <div class="tab-panel" *ngIf="etapeActive === 1">
+          <div class="etapes-timeline">
+            <div class="etape-item" 
+                 *ngFor="let etape of demarcheSelectionnee.etapes; let i = index"
+                 [class.obligatoire]="etape.obligatoire">
+              <div class="etape-number">
+                <span>{{ etape.numero }}</span>
+              </div>
+              <div class="etape-content">
+                <div class="etape-header">
+                  <h4>{{ etape.titre }}</h4>
+                  <div class="etape-badges">
+                    <span class="duree-badge">
+                      <i class="fas fa-clock"></i>
+                      {{ etape.dureeEstimee }}
+                    </span>
+                    <span class="obligatoire-badge" *ngIf="etape.obligatoire">
+                      Obligatoire
+                    </span>
+                  </div>
+                </div>
+                <p>{{ etape.description }}</p>
+                
+                <div class="etape-documents" *ngIf="etape.documentsNecessaires.length > 0">
+                  <h5>Documents nécessaires :</h5>
+                  <ul>
+                    <li *ngFor="let doc of etape.documentsNecessaires">
+                      <i class="fas fa-file"></i>
+                      {{ doc }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Onglet Formulaires -->
+        <div class="tab-panel" *ngIf="etapeActive === 2">
+          <div class="formulaires-section">
+            <h3>Formulaires à télécharger</h3>
+            <div class="formulaires-list">
+              <div class="formulaire-item" *ngFor="let formulaire of demarcheSelectionnee.formulaires">
+                <div class="formulaire-info">
+                  <i class="fas fa-file-pdf"></i>
+                  <span>{{ formulaire }}</span>
+                </div>
+                <button class="btn btn-secondary" (click)="telechargerFormulaire(formulaire)">
+                  <i class="fas fa-download"></i>
+                  Télécharger
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Onglet FAQ -->
+        <div class="tab-panel" *ngIf="etapeActive === 3">
+          <div class="faq-section">
+            <h3>Questions fréquentes</h3>
+            <div class="faq-list">
+              <div class="faq-item" *ngFor="let faq of demarcheSelectionnee.faq">
+                <div class="faq-question">
+                  <i class="fas fa-question-circle"></i>
+                  <strong>{{ faq.question }}</strong>
+                </div>
+                <div class="faq-reponse">
+                  <p>{{ faq.reponse }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section aide -->
+<section class="aide-section">
+  <div class="container">
+    <div class="aide-content">
+      <div class="aide-text">
+        <h3>Besoin d'aide ?</h3>
+        <p>Notre équipe est là pour vous accompagner dans vos démarches administratives.</p>
+      </div>
+      <div class="aide-actions">
+        <button class="btn btn-primary">
+          <i class="fas fa-phone"></i>
+          Nous contacter
+        </button>
+        <button class="btn btn-secondary">
+          <i class="fas fa-calendar-plus"></i>
+          Prendre rendez-vous
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer réutilisable -->
+<app-footer></app-footer>

@@ -1,0 +1,48 @@
+<!-- Header avec navigation -->
+<header class="header">
+  <nav class="navbar">
+    <div class="nav-brand">
+      <img src="assets/images/logomairie.jpeg" alt="Logo Mairie" class="logo">
+      <!-- <h1>{{ title }}</h1> -->
+    </div>
+    
+    <!-- Menu desktop -->
+    <ul class="nav-menu desktop-menu">
+      <li *ngFor="let item of menuItems">
+        <a [routerLink]="item.path" 
+           routerLinkActive="active" 
+           [routerLinkActiveOptions]="{exact: item.exact}"
+           (click)="closeMobileMenu()">
+          {{ item.label }}
+        </a>
+      </li>
+    </ul>
+
+    <!-- Bouton menu mobile -->
+    <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Menu mobile -->
+  <div class="mobile-menu" [class.open]="isMobileMenuOpen">
+    <ul class="mobile-nav-menu">
+      <li *ngFor="let item of menuItems">
+        <a [routerLink]="item.path" 
+           routerLinkActive="active" 
+           [routerLinkActiveOptions]="{exact: item.exact}"
+           (click)="closeMobileMenu()">
+          {{ item.label }}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Overlay pour fermer le menu mobile -->
+  <div class="mobile-overlay" 
+       *ngIf="isMobileMenuOpen" 
+       (click)="closeMobileMenu()">
+  </div>
+</header>

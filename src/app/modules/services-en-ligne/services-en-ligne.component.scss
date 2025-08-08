@@ -1,0 +1,553 @@
+// Variables
+$primary-color: #2c5aa0;
+$secondary-color: #f4f4f4;
+$accent-color: #e74c3c;
+$text-color: #333;
+$light-gray: #f8f9fa;
+$border-color: #ddd;
+$success-color: #27ae60;
+$warning-color: #f39c12;
+
+// Header et Navigation (réutilisable)
+.header {
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .logo {
+    height: 50px;
+    width: auto;
+  }
+
+  h1 {
+    color: $primary-color;
+    font-size: 1.5rem;
+    margin: 0;
+  }
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2rem;
+
+  a {
+    text-decoration: none;
+    color: $text-color;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+
+    &:hover, &.active {
+      background: $primary-color;
+      color: white;
+    }
+  }
+}
+
+// Container
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+// Bannière de page
+.page-banner {
+  background: linear-gradient(135deg, $primary-color, lighten($primary-color, 20%));
+  color: white;
+  padding: 3rem 0;
+  text-align: center;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+}
+
+// Navigation des onglets
+.tabs-navigation {
+  background: white;
+  border-bottom: 1px solid $border-color;
+  padding: 0;
+}
+
+.tabs {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 1.5rem 2rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  color: lighten($text-color, 20%);
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    color: $primary-color;
+    background: lighten($primary-color, 45%);
+  }
+
+  &.active {
+    color: $primary-color;
+    border-bottom-color: $primary-color;
+    background: lighten($primary-color, 45%);
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+// Contenu des onglets
+.tab-content {
+  padding: 3rem 0;
+  background: $light-gray;
+  min-height: 60vh;
+}
+
+.tab-panel {
+  h2 {
+    color: $primary-color;
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2rem;
+  }
+}
+
+// Grille des services
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.service-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid $border-color;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    border-color: lighten($primary-color, 20%);
+  }
+
+  &.selected {
+    border-color: $primary-color;
+    background: lighten($primary-color, 45%);
+    transform: translateY(-3px);
+  }
+}
+
+.service-icon {
+  margin-bottom: 1rem;
+
+  i {
+    font-size: 3rem;
+    color: $primary-color;
+  }
+}
+
+.service-card h3 {
+  color: $primary-color;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.service-card p {
+  color: lighten($text-color, 20%);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.service-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  .delai {
+    color: $warning-color;
+  }
+
+  .prix {
+    color: $success-color;
+  }
+}
+
+// Formulaires
+.demande-form, .rendez-vous-form, .suivi-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-top: 2rem;
+
+  h3 {
+    color: $primary-color;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid $light-gray;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: $text-color;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid $border-color;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    }
+
+    &:invalid {
+      border-color: $accent-color;
+    }
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  select.form-control {
+    cursor: pointer;
+  }
+}
+
+// Actions des formulaires
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid $border-color;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+// Boutons
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    background: $primary-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: darken($primary-color, 10%);
+      transform: translateY(-2px);
+    }
+  }
+
+  &.btn-secondary {
+    background: $light-gray;
+    color: $text-color;
+    border: 2px solid $border-color;
+
+    &:hover {
+      background: darken($light-gray, 5%);
+    }
+  }
+}
+
+// Modal de confirmation
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.confirmation-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.confirmation-header {
+  margin-bottom: 1.5rem;
+
+  i {
+    font-size: 3rem;
+    color: $success-color;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    color: $primary-color;
+    margin: 0;
+  }
+}
+
+.confirmation-modal p {
+  color: $text-color;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+// Section d'informations pour le suivi
+.suivi-info {
+  background: lighten($primary-color, 45%);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border-left: 4px solid $primary-color;
+
+  p {
+    margin: 0;
+    color: $text-color;
+    line-height: 1.6;
+  }
+}
+
+// Section d'informations utiles
+.info-section {
+  margin-top: 3rem;
+
+  h3 {
+    color: $primary-color;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+}
+
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.info-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+  i {
+    font-size: 2.5rem;
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+
+  h4 {
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+
+    li {
+      padding: 0.25rem 0;
+      color: $text-color;
+      position: relative;
+      padding-left: 1rem;
+
+      &:before {
+        content: '•';
+        color: $primary-color;
+        position: absolute;
+        left: 0;
+      }
+    }
+  }
+}
+
+// Footer
+.footer {
+  background: $text-color;
+  color: white;
+  padding: 3rem 0 1rem;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-section {
+  h4 {
+    margin: 0 0 1rem 0;
+    color: white;
+  }
+
+  p {
+    margin: 0;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+  }
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-link {
+  color: rgba(255,255,255,0.8);
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: white;
+  }
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.2);
+
+  p {
+    margin: 0;
+    color: rgba(255,255,255,0.6);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .page-banner h1 {
+    font-size: 2rem;
+  }
+
+  .tabs {
+    flex-direction: column;
+    padding: 0 1rem;
+  }
+
+  .tab-button {
+    padding: 1rem;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,641 @@
+<!-- Header réutilisable -->
+<app-header></app-header>
+
+<!-- Bannière de la page -->
+<section class="page-banner">
+  <div class="container">
+    <h1>Espace Citoyen</h1>
+    <p>Participez à la vie de votre commune : signalez, suggérez, donnez votre avis</p>
+  </div>
+</section>
+
+<!-- Navigation des onglets -->
+<section class="tabs-section">
+  <div class="container">
+    <div class="tabs-navigation">
+      <button class="tab-btn" 
+              [class.active]="ongletActif === 'signalements'"
+              (click)="changerOnglet('signalements')">
+        <i class="fas fa-exclamation-triangle"></i>
+        Signalements
+        <span class="badge">{{ signalements.length }}</span>
+      </button>
+      <button class="tab-btn" 
+              [class.active]="ongletActif === 'nouveau-signalement'"
+              (click)="changerOnglet('nouveau-signalement')">
+        <i class="fas fa-plus-circle"></i>
+        Nouveau signalement
+      </button>
+      <button class="tab-btn" 
+              [class.active]="ongletActif === 'suggestions'"
+              (click)="changerOnglet('suggestions')">
+        <i class="fas fa-lightbulb"></i>
+        Suggestions
+        <span class="badge">{{ suggestions.length }}</span>
+      </button>
+      <button class="tab-btn" 
+              [class.active]="ongletActif === 'nouvelle-suggestion'"
+              (click)="changerOnglet('nouvelle-suggestion')">
+        <i class="fas fa-plus"></i>
+        Nouvelle suggestion
+      </button>
+      <button class="tab-btn" 
+              [class.active]="ongletActif === 'sondages'"
+              (click)="changerOnglet('sondages')">
+        <i class="fas fa-poll"></i>
+        Sondages
+        <span class="badge">{{ sondagesActifs.length }}</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Contenu des onglets -->
+<section class="content-section">
+  <div class="container">
+    
+    <!-- Onglet Signalements -->
+    <div class="tab-content" *ngIf="ongletActif === 'signalements'">
+      <div class="section-header">
+        <h2>Vos signalements</h2>
+        <p>Consultez l'état d'avancement de vos signalements et ceux de la communauté</p>
+      </div>
+
+      <!-- Filtres -->
+      <div class="filtres-bar">
+        <div class="filtres-group">
+          <select [(ngModel)]="filtreStatutSignalement" class="filtre-select">
+            <option value="tous">Tous les statuts</option>
+            <option value="nouveau">Nouveau</option>
+            <option value="en_cours">En cours</option>
+            <option value="resolu">Résolu</option>
+            <option value="ferme">Fermé</option>
+          </select>
+          
+          <select [(ngModel)]="filtreCategorieSignalement" class="filtre-select">
+            <option value="toutes">Toutes catégories</option>
+            <option *ngFor="let cat of categoriesSignalement" [value]="cat.id">{{ cat.nom }}</option>
+          </select>
+          
+          <button class="view-toggle" 
+                  [class.active]="affichageSignalements === 'cartes'"
+                  (click)="affichageSignalements = 'cartes'">
+            <i class="fas fa-th"></i>
+          </button>
+          <button class="view-toggle" 
+                  [class.active]="affichageSignalements === 'liste'"
+                  (click)="affichageSignalements = 'liste'">
+            <i class="fas fa-list"></i>
+          </button>
+        </div>
+        
+        <button class="reset-btn" (click)="resetFiltres()">
+          <i class="fas fa-undo"></i>
+          Réinitialiser
+        </button>
+      </div>
+
+      <!-- Affichage cartes -->
+      <div class="signalements-grid" *ngIf="affichageSignalements === 'cartes'">
+        <div class="signalement-card" *ngFor="let signalement of signalementsAffiches" (click)="ouvrirSignalement(signalement)">
+          <div class="card-header">
+            <div class="card-badges">
+              <span class="category-badge" [style.background-color]="getCouleurCategorie(signalement.categorie)">
+                <i [class]="getIconeCategorie(signalement.categorie)"></i>
+                {{ getNomCategorie(signalement.categorie) }}
+              </span>
+              <span class="statut-badge" [style.background-color]="getStatutCouleur(signalement.statut)">
+                {{ getStatutLabel(signalement.statut) }}
+              </span>
+              <span class="priorite-badge" [style.background-color]="getPrioriteCouleur(signalement.priorite)">
+                {{ getPrioriteLabel(signalement.priorite) }}
+              </span>
+            </div>
+            <span class="reference">{{ signalement.numeroReference }}</span>
+          </div>
+          
+          <div class="card-content">
+            <h3>{{ signalement.titre }}</h3>
+            <p class="description">{{ signalement.description | slice:0:120 }}{{ signalement.description.length > 120 ? '...' : '' }}</p>
+            <p class="localisation">
+              <i class="fas fa-map-marker-alt"></i>
+              {{ signalement.localisation }}
+            </p>
+          </div>
+          
+          <div class="card-footer">
+            <div class="dates">
+              <span class="date-creation">Créé {{ tempsEcoule(signalement.dateCreation) }}</span>
+              <span class="date-maj">MAJ {{ tempsEcoule(signalement.dateMiseAJour) }}</span>
+            </div>
+            <div class="commentaires-count" *ngIf="signalement.commentairesPublics.length > 0">
+              <i class="fas fa-comments"></i>
+              {{ signalement.commentairesPublics.length }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Affichage liste -->
+      <div class="signalements-list" *ngIf="affichageSignalements === 'liste'">
+        <div class="signalement-item" *ngFor="let signalement of signalementsAffiches" (click)="ouvrirSignalement(signalement)">
+          <div class="item-badges">
+            <span class="category-badge" [style.background-color]="getCouleurCategorie(signalement.categorie)">
+              <i [class]="getIconeCategorie(signalement.categorie)"></i>
+            </span>
+            <span class="statut-badge" [style.background-color]="getStatutCouleur(signalement.statut)">
+              {{ getStatutLabel(signalement.statut) }}
+            </span>
+            <span class="priorite-badge" [style.background-color]="getPrioriteCouleur(signalement.priorite)">
+              {{ getPrioriteLabel(signalement.priorite) }}
+            </span>
+          </div>
+          
+          <div class="item-content">
+            <div class="item-header">
+              <h3>{{ signalement.titre }}</h3>
+              <span class="reference">{{ signalement.numeroReference }}</span>
+            </div>
+            <p class="description">{{ signalement.description }}</p>
+            <div class="item-meta">
+              <span class="localisation">
+                <i class="fas fa-map-marker-alt"></i>
+                {{ signalement.localisation }}
+              </span>
+              <span class="dates">
+                Créé {{ tempsEcoule(signalement.dateCreation) }} • MAJ {{ tempsEcoule(signalement.dateMiseAJour) }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="item-actions">
+            <div class="commentaires-count" *ngIf="signalement.commentairesPublics.length > 0">
+              <i class="fas fa-comments"></i>
+              {{ signalement.commentairesPublics.length }}
+            </div>
+            <button class="voir-details-btn">
+              <i class="fas fa-eye"></i>
+              Voir détails
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglet Nouveau signalement -->
+    <div class="tab-content" *ngIf="ongletActif === 'nouveau-signalement'">
+      <div class="section-header">
+        <h2>Nouveau signalement</h2>
+        <p>Signalez un problème dans votre commune pour améliorer le cadre de vie</p>
+      </div>
+
+      <form [formGroup]="signalementForm" (ngSubmit)="soumettreSignalement()" class="signalement-form">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="titre">Titre du signalement *</label>
+            <input type="text" 
+                   id="titre" 
+                   formControlName="titre" 
+                   class="form-control"
+                   placeholder="Décrivez brièvement le problème">
+            <div class="error-message" *ngIf="signalementForm.get('titre')?.invalid && signalementForm.get('titre')?.touched">
+              Le titre doit contenir au moins 5 caractères
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label for="categorie">Catégorie *</label>
+            <select id="categorie" formControlName="categorie" class="form-control">
+              <option value="">Sélectionnez une catégorie</option>
+              <option *ngFor="let cat of categoriesSignalement" [value]="cat.id">
+                {{ cat.nom }} - {{ cat.description }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group half-width">
+            <label for="priorite">Priorité</label>
+            <select id="priorite" formControlName="priorite" class="form-control">
+              <option value="basse">Basse</option>
+              <option value="moyenne">Moyenne</option>
+              <option value="haute">Haute</option>
+              <option value="urgente">Urgente</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="localisation">Localisation *</label>
+            <input type="text" 
+                   id="localisation" 
+                   formControlName="localisation" 
+                   class="form-control"
+                   placeholder="Adresse ou lieu précis du problème">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="description">Description détaillée *</label>
+            <textarea id="description" 
+                      formControlName="description" 
+                      class="form-control"
+                      rows="5"
+                      placeholder="Décrivez le problème en détail, les circonstances, l'impact..."></textarea>
+            <div class="error-message" *ngIf="signalementForm.get('description')?.invalid && signalementForm.get('description')?.touched">
+              La description doit contenir au moins 20 caractères
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="photos">Photos (optionnel)</label>
+            <input type="file" 
+                   id="photos" 
+                   multiple 
+                   accept="image/*"
+                   (change)="onFileSelected($event)"
+                   class="form-control file-input">
+            <div class="file-help">
+              Ajoutez des photos pour illustrer le problème (max 5 fichiers, 2MB chacun)
+            </div>
+            
+            <!-- Aperçu des photos -->
+            <div class="photos-preview" *ngIf="signalementForm.get('photos')?.value?.length > 0">
+              <div class="photo-item" *ngFor="let photo of signalementForm.get('photos')?.value; let i = index">
+                <img [src]="photo" [alt]="'Photo ' + (i + 1)">
+                <button type="button" class="remove-photo" (click)="supprimerPhoto(i)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="signalementForm.reset()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="signalementForm.invalid">
+            <i class="fas fa-paper-plane"></i>
+            Envoyer le signalement
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Onglet Suggestions -->
+    <div class="tab-content" *ngIf="ongletActif === 'suggestions'">
+      <div class="section-header">
+        <h2>Suggestions citoyennes</h2>
+        <p>Proposez vos idées pour améliorer votre commune et votez pour celles qui vous plaisent</p>
+      </div>
+
+      <!-- Filtre statut -->
+      <div class="filtres-bar">
+        <select [(ngModel)]="filtreStatutSuggestion" class="filtre-select">
+          <option value="tous">Tous les statuts</option>
+          <option value="en_attente">En attente</option>
+          <option value="en_etude">En étude</option>
+          <option value="acceptee">Acceptée</option>
+          <option value="rejetee">Rejetée</option>
+        </select>
+      </div>
+
+      <!-- Liste des suggestions -->
+      <div class="suggestions-list">
+        <div class="suggestion-card" *ngFor="let suggestion of suggestionsAffichees" (click)="ouvrirSuggestion(suggestion)">
+          <div class="card-header">
+            <div class="votes-section">
+              <button class="vote-btn" 
+                      [class.voted]="suggestion.aVote"
+                      [disabled]="suggestion.aVote"
+                      (click)="$event.stopPropagation(); voterSuggestion(suggestion)">
+                <i class="fas fa-thumbs-up"></i>
+                <span class="votes-count">{{ suggestion.votes }}</span>
+              </button>
+            </div>
+            
+            <div class="suggestion-info">
+              <div class="suggestion-badges">
+                <!-- <span class="category-badge">{{ categoriesSuggestion.find(c => c.id === suggestion.categorie)?.nom }}</span> -->
+                  <span class="category-badge">{{ getNomCategorieSuggestion(suggestion.categorie) }}</span>
+                <span class="statut-badge" [style.background-color]="getStatutCouleur(suggestion.statut)">
+                  {{ getStatutLabel(suggestion.statut) }}
+                </span>
+              </div>
+              <h3>{{ suggestion.titre }}</h3>
+              <p class="description">{{ suggestion.description }}</p>
+            </div>
+          </div>
+          
+          <div class="card-footer">
+            <div class="suggestion-meta">
+              <span class="date">Proposée {{ tempsEcoule(suggestion.dateCreation) }}</span>
+              <span class="commentaires" *ngIf="suggestion.commentaires.length > 0">
+                <i class="fas fa-comments"></i>
+                {{ suggestion.commentaires.length }} commentaires
+              </span>
+            </div>
+            <button class="voir-details-btn">
+              Voir détails
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onglet Nouvelle suggestion -->
+    <div class="tab-content" *ngIf="ongletActif === 'nouvelle-suggestion'">
+      <div class="section-header">
+        <h2>Nouvelle suggestion</h2>
+        <p>Proposez une idée pour améliorer votre commune</p>
+      </div>
+
+      <form [formGroup]="suggestionForm" (ngSubmit)="soumettresuggestion()" class="suggestion-form">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="titre-suggestion">Titre de la suggestion *</label>
+            <input type="text" 
+                   id="titre-suggestion" 
+                   formControlName="titre" 
+                   class="form-control"
+                   placeholder="Résumez votre idée en quelques mots">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="categorie-suggestion">Catégorie *</label>
+            <select id="categorie-suggestion" formControlName="categorie" class="form-control">
+              <option value="">Sélectionnez une catégorie</option>
+              <option *ngFor="let cat of categoriesSuggestion" [value]="cat.id">{{ cat.nom }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="description-suggestion">Description détaillée *</label>
+            <textarea id="description-suggestion" 
+                      formControlName="description" 
+                      class="form-control"
+                      rows="6"
+                      placeholder="Décrivez votre suggestion en détail : objectifs, bénéfices, mise en œuvre..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="suggestionForm.reset()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="suggestionForm.invalid">
+            <i class="fas fa-lightbulb"></i>
+            Proposer la suggestion
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Onglet Sondages -->
+    <div class="tab-content" *ngIf="ongletActif === 'sondages'">
+      <div class="section-header">
+        <h2>Sondages citoyens</h2>
+        <p>Participez aux consultations publiques et donnez votre avis</p>
+      </div>
+
+      <!-- Sondages actifs -->
+      <div class="sondages-section" *ngIf="sondagesActifs.length > 0">
+        <h3>Sondages en cours</h3>
+        <div class="sondages-grid">
+          <div class="sondage-card active" *ngFor="let sondage of sondagesActifs" (click)="ouvrirSondage(sondage)">
+            <div class="card-header">
+              <div class="sondage-status">
+                <span class="status-badge actif">En cours</span>
+                <span class="participants">{{ sondage.participations }} participants</span>
+              </div>
+              <div class="sondage-dates">
+                <span class="date-fin">
+                  <i class="fas fa-clock"></i>
+                  Jusqu'au {{ formaterDate(sondage.dateFin) }}
+                </span>
+              </div>
+            </div>
+            
+            <div class="card-content">
+              <h3>{{ sondage.titre }}</h3>
+              <p class="description">{{ sondage.description }}</p>
+              <div class="questions-count">
+                <i class="fas fa-question-circle"></i>
+                {{ sondage.questions.length }} questions
+              </div>
+            </div>
+            
+            <div class="card-footer">
+              <button class="btn btn-primary" [disabled]="sondage.aParticipe">
+                <i class="fas fa-vote-yea" *ngIf="!sondage.aParticipe"></i>
+                <i class="fas fa-check" *ngIf="sondage.aParticipe"></i>
+                {{ sondage.aParticipe ? 'Déjà participé' : 'Participer' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sondages terminés -->
+      <div class="sondages-section" *ngIf="sondagesTermines.length > 0">
+        <h3>Sondages terminés</h3>
+        <div class="sondages-grid">
+          <div class="sondage-card terminated" *ngFor="let sondage of sondagesTermines">
+            <div class="card-header">
+              <div class="sondage-status">
+                <span class="status-badge termine">Terminé</span>
+                <span class="participants">{{ sondage.participations }} participants</span>
+              </div>
+            </div>
+            
+            <div class="card-content">
+              <h3>{{ sondage.titre }}</h3>
+              <p class="description">{{ sondage.description }}</p>
+            </div>
+            
+            <div class="card-footer">
+              <button class="btn btn-secondary">
+                <i class="fas fa-chart-bar"></i>
+                Voir les résultats
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal détail signalement -->
+<div class="modal-overlay" *ngIf="signalementSelectionne" (click)="fermerSignalement()">
+  <div class="modal signalement-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">
+        <h2>{{ signalementSelectionne.titre }}</h2>
+        <div class="modal-badges">
+          <span class="category-badge" [style.background-color]="getCouleurCategorie(signalementSelectionne.categorie)">
+            <i [class]="getIconeCategorie(signalementSelectionne.categorie)"></i>
+            {{ getNomCategorie(signalementSelectionne.categorie) }}
+          </span>
+          <span class="statut-badge" [style.background-color]="getStatutCouleur(signalementSelectionne.statut)">
+            {{ getStatutLabel(signalementSelectionne.statut) }}
+          </span>
+          <span class="priorite-badge" [style.background-color]="getPrioriteCouleur(signalementSelectionne.priorite)">
+            {{ getPrioriteLabel(signalementSelectionne.priorite) }}
+          </span>
+        </div>
+      </div>
+      <button class="close-btn" (click)="fermerSignalement()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      <div class="signalement-details">
+        <div class="detail-section">
+          <h4>Description</h4>
+          <p>{{ signalementSelectionne.description }}</p>
+        </div>
+
+        <div class="detail-section">
+          <h4>Informations</h4>
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>Référence :</strong>
+              <span>{{ signalementSelectionne.numeroReference }}</span>
+            </div>
+            <div class="info-item">
+              <strong>Localisation :</strong>
+              <span>{{ signalementSelectionne.localisation }}</span>
+            </div>
+            <div class="info-item">
+              <strong>Date de création :</strong>
+              <span>{{ formaterDate(signalementSelectionne.dateCreation) }}</span>
+            </div>
+            <div class="info-item">
+              <strong>Dernière mise à jour :</strong>
+              <span>{{ formaterDate(signalementSelectionne.dateMiseAJour) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section" *ngIf="signalementSelectionne.photos && signalementSelectionne.photos.length > 0">
+          <h4>Photos</h4>
+          <div class="photos-gallery">
+            <img *ngFor="let photo of signalementSelectionne.photos" 
+                 [src]="photo" 
+                 [alt]="signalementSelectionne.titre"
+                 class="gallery-photo">
+          </div>
+        </div>
+
+        <div class="detail-section" *ngIf="signalementSelectionne.commentairesPublics.length > 0">
+          <h4>Suivi et commentaires</h4>
+          <div class="commentaires-list">
+            <div class="commentaire-item" *ngFor="let commentaire of signalementSelectionne.commentairesPublics">
+              <div class="commentaire-header">
+                <span class="auteur" [class.administration]="commentaire.typeAuteur === 'administration'">
+                  {{ commentaire.auteur }}
+                </span>
+                <span class="date">{{ formaterDate(commentaire.date) }}</span>
+              </div>
+              <p class="commentaire-message">{{ commentaire.message }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal sondage -->
+<div class="modal-overlay" *ngIf="sondageSelectionne" (click)="fermerSondage()">
+  <div class="modal sondage-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">
+        <h2>{{ sondageSelectionne.titre }}</h2>
+        <p>{{ sondageSelectionne.description }}</p>
+      </div>
+      <button class="close-btn" (click)="fermerSondage()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-content">
+      <div class="sondage-questions" *ngIf="!sondageSelectionne.aParticipe">
+        <div class="question-item" *ngFor="let question of sondageSelectionne.questions; let i = index">
+          <h4>{{ i + 1 }}. {{ question.question }}</h4>
+          
+          <!-- Question à choix unique -->
+          <div class="options-list" *ngIf="question.type === 'choix_unique'">
+            <label class="option-item" *ngFor="let option of question.options">
+              <input type="radio" 
+                     [name]="'question_' + question.id" 
+                     [value]="option"
+                     [(ngModel)]="question.reponseSelectionnee">
+              <span class="option-text">{{ option }}</span>
+            </label>
+          </div>
+          
+          <!-- Question à choix multiples -->
+ <div class="options-list" *ngIf="question.type === 'choix_multiple'">
+  <label class="option-item" *ngFor="let option of question.options">
+    <input type="checkbox" 
+           [value]="option"
+           [checked]="isOptionSelected(question, option)"
+           (change)="toggleOptionSelection(question, option, $event)">
+    <span class="option-text">{{ option }}</span>
+  </label>
+</div>
+          
+          <!-- Question avec note -->
+          <div class="rating-input" *ngIf="question.type === 'note'">
+            <div class="rating-scale">
+              <label *ngFor="let note of [1,2,3,4,5]" class="rating-item">
+                <input type="radio" 
+                       [name]="'question_' + question.id" 
+                       [value]="note"
+                       [(ngModel)]="question.reponseSelectionnee">
+                <span class="rating-number">{{ note }}</span>
+              </label>
+            </div>
+            <div class="rating-labels">
+              <span>Très mauvais</span>
+              <span>Excellent</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button class="btn btn-secondary" (click)="fermerSondage()">Annuler</button>
+          <button class="btn btn-primary" (click)="participerSondage(sondageSelectionne)">
+            <i class="fas fa-vote-yea"></i>
+            Valider ma participation
+          </button>
+        </div>
+      </div>
+      
+      <div class="sondage-termine" *ngIf="sondageSelectionne.aParticipe">
+        <div class="message-participation">
+          <i class="fas fa-check-circle"></i>
+          <h3>Merci pour votre participation !</h3>
+          <p>Vos réponses ont été enregistrées. Les résultats seront publiés à la fin du sondage.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer réutilisable -->
+<app-footer></app-footer>

@@ -1,0 +1,697 @@
+// Variables
+$primary-color: #2c5aa0;
+$secondary-color: #f4f4f4;
+$accent-color: #e74c3c;
+$text-color: #333;
+$light-gray: #f8f9fa;
+$border-color: #ddd;
+$success-color: #27ae60;
+$warning-color: #f39c12;
+$danger-color: #e74c3c;
+
+// Container
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
+}
+
+// Bannière de page
+.page-banner {
+  background: linear-gradient(135deg, $primary-color, lighten($primary-color, 20%));
+  color: white;
+  padding: 3rem 0;
+  text-align: center;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+
+  p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+}
+
+// Section recherche et filtres
+.search-filters {
+  background: white;
+  padding: 2rem 0;
+  border-bottom: 1px solid $border-color;
+}
+
+.search-bar {
+  margin-bottom: 2rem;
+}
+
+.search-input-group {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+
+  i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: lighten($text-color, 30%);
+    font-size: 1.1rem;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid $border-color;
+    border-radius: 25px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    }
+
+    &::placeholder {
+      color: lighten($text-color, 40%);
+    }
+  }
+}
+
+// Services d'urgence
+.services-urgence {
+  h3 {
+    color: $danger-color;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+
+    &:before {
+      content: '🚨';
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+.urgence-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.urgence-card {
+  background: lighten($danger-color, 45%);
+  border: 2px solid $danger-color;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba($danger-color, 0.2);
+  }
+}
+
+.urgence-icon {
+  background: $danger-color;
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.urgence-info {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 0.5rem 0;
+    color: $danger-color;
+    font-size: 1.1rem;
+  }
+
+  .urgence-tel {
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: $danger-color;
+    }
+
+    a {
+      color: $danger-color;
+      text-decoration: none;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .urgence-dispo {
+    font-size: 0.9rem;
+    color: darken($danger-color, 10%);
+    font-weight: 500;
+  }
+}
+
+// Liste des services
+.services-list {
+  padding: 3rem 0;
+  background: $light-gray;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.service-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: lighten($primary-color, 30%);
+  }
+}
+
+// En-tête du service
+.service-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.service-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.service-title {
+  flex: 1;
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    color: $text-color;
+    font-size: 1.3rem;
+  }
+
+  p {
+    margin: 0;
+    color: lighten($text-color, 20%);
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+}
+
+.service-status {
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    &.ouvert {
+      background: lighten($success-color, 40%);
+      color: $success-color;
+    }
+
+    &.ferme {
+      background: lighten($danger-color, 40%);
+      color: $danger-color;
+    }
+  }
+}
+
+// Informations rapides
+.service-quick-info {
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+
+  i {
+    color: $primary-color;
+    width: 16px;
+    flex-shrink: 0;
+  }
+
+  span {
+    color: $text-color;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Aperçu des services
+.service-preview {
+  margin-bottom: 1.5rem;
+
+  h4 {
+    margin: 0 0 1rem 0;
+    color: $text-color;
+    font-size: 1rem;
+  }
+}
+
+.services-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.service-tag {
+  background: lighten($primary-color, 45%);
+  color: $primary-color;
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  &.more {
+    background: lighten($text-color, 40%);
+    color: $text-color;
+  }
+}
+
+// Actions du service
+.service-actions {
+  text-align: center;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+
+  &.btn-primary {
+    background: $primary-color;
+    color: white;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+      transform: translateY(-2px);
+    }
+  }
+
+  &.btn-secondary {
+    background: $light-gray;
+    color: $text-color;
+    border: 2px solid $border-color;
+
+    &:hover {
+      background: darken($light-gray, 5%);
+    }
+  }
+}
+
+// Modal de détails
+.service-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.service-modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid $border-color;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+}
+
+.modal-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex: 1;
+
+  .service-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    margin: 0 0 0.5rem 0;
+    color: $text-color;
+    font-size: 1.5rem;
+  }
+
+  p {
+    margin: 0;
+    color: lighten($text-color, 20%);
+    font-size: 0.9rem;
+  }
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: lighten($text-color, 30%);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: $light-gray;
+    color: $text-color;
+  }
+}
+
+.modal-content {
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+  }
+}
+
+.modal-section {
+  margin-bottom: 2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h3 {
+    color: $primary-color;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    border-bottom: 2px solid lighten($primary-color, 40%);
+    padding-bottom: 0.5rem;
+  }
+}
+
+// Informations de contact dans la modal
+.contact-info {
+  display: grid;
+  gap: 1rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+
+  i {
+    color: $primary-color;
+    width: 20px;
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  div {
+    flex: 1;
+
+    strong {
+      display: block;
+      color: $text-color;
+      margin-bottom: 0.25rem;
+    }
+
+    span, a {
+      color: lighten($text-color, 20%);
+      text-decoration: none;
+
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+// Horaires dans la modal
+.horaires-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.horaire-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid lighten($border-color, 10%);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .jour {
+    font-weight: 600;
+    color: $text-color;
+    text-transform: capitalize;
+  }
+
+  .heure {
+    color: $success-color;
+    font-weight: 500;
+
+    &.ferme {
+      color: $danger-color;
+    }
+  }
+}
+
+// Listes dans la modal
+.services-list-modal, .documents-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    color: $text-color;
+
+    i {
+      color: $success-color;
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// Tableau des tarifs
+.tarifs-table {
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tarif-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid $border-color;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:nth-child(even) {
+    background: $light-gray;
+  }
+
+  .tarif-service {
+    color: $text-color;
+    font-weight: 500;
+  }
+
+  .tarif-prix {
+    color: $primary-color;
+    font-weight: 600;
+  }
+}
+
+// Actions de la modal
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1rem 2rem 2rem;
+  border-top: 1px solid $border-color;
+
+  @media (max-width: 768px) {
+    padding: 1rem 1.5rem 1.5rem;
+    flex-direction: column;
+  }
+}
+
+// Section informations pratiques
+.infos-pratiques {
+  padding: 4rem 0;
+  background: white;
+
+  h2 {
+    text-align: center;
+    color: $primary-color;
+    margin-bottom: 3rem;
+    font-size: 2rem;
+  }
+}
+
+.infos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.info-card {
+  text-align: center;
+  padding: 2rem;
+  background: $light-gray;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  i {
+    font-size: 3rem;
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    color: $text-color;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+
+  p {
+    color: lighten($text-color, 20%);
+    line-height: 1.6;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .service-card {
+    padding: 1.5rem;
+  }
+
+  .service-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .service-icon {
+    align-self: center;
+  }
+
+  .urgence-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .modal-title {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .contact-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .tarif-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}

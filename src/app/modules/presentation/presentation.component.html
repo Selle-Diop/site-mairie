@@ -1,0 +1,177 @@
+<!-- Header réutilisable -->
+<app-header></app-header>
+
+<!-- Bannière de la page -->
+<section class="page-banner">
+  <div class="container">
+    <h1>Présentation de la Commune</h1>
+    <p>Découvrez l'histoire, l'organisation et les projets de Sicap Liberté</p>
+  </div>
+</section>
+
+<!-- Histoire de la commune -->
+<section class="histoire">
+  <div class="container">
+    <div class="section-header">
+      <h2>{{ histoire.titre }}</h2>
+    </div>
+    <div class="histoire-content">
+      <div class="histoire-text">
+        <p>{{ histoire.contenu }}</p>
+        <div class="histoire-stats">
+          <div class="stat-item">
+            <h3>{{ histoire.dateCreation }}</h3>
+            <p>Année de création</p>
+          </div>
+          <div class="stat-item">
+            <h3>{{ histoire.superficie }}</h3>
+            <p>Superficie</p>
+          </div>
+          <div class="stat-item">
+            <h3>{{ histoire.population }}</h3>
+            <p>Population</p>
+          </div>
+        </div>
+      </div>
+      <div class="histoire-image">
+        <img src="assets/images/histoire-commune.jpg" alt="Histoire de Sicap Liberté">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Organisation administrative -->
+<section class="organisation">
+  <div class="container">
+    <div class="section-header">
+      <h2>Organisation Administrative</h2>
+    </div>
+    
+    <!-- Maire -->
+    <div class="maire-section">
+      <div class="maire-card">
+        <div class="maire-photo">
+          <img [src]="organisationAdmin.maire.photo" [alt]="organisationAdmin.maire.nom">
+        </div>
+        <div class="maire-info">
+          <h3>{{ organisationAdmin.maire.nom }}</h3>
+          <p class="maire-titre">Maire de Sicap Liberté</p>
+          <p class="maire-mandat">Mandat : {{ organisationAdmin.maire.mandat }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conseil municipal -->
+    <div class="conseil-municipal">
+      <h3>Conseil Municipal</h3>
+      <div class="conseil-info">
+        <p><strong>{{ organisationAdmin.conseilMunicipal.nombreConseillers }}</strong> conseillers municipaux</p>
+        <div class="partis-grid">
+          <div class="parti-card" *ngFor="let parti of organisationAdmin.conseilMunicipal.partis">
+            <h4>{{ parti.nom }}</h4>
+            <span class="sieges">{{ parti.sieges }} sièges</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Services municipaux -->
+    <div class="services-municipaux">
+      <h3>Services Municipaux</h3>
+      <div class="services-grid">
+        <div class="service-card" *ngFor="let service of organisationAdmin.services">
+          <h4>{{ service.nom }}</h4>
+          <p class="responsable">Responsable : {{ service.responsable }}</p>
+          <p class="description">{{ service.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Géographie et carte -->
+<section class="geographie">
+  <div class="container">
+    <div class="section-header">
+      <h2>Géographie et Localisation</h2>
+    </div>
+    <div class="geo-content">
+      <div class="geo-info">
+        <div class="limites">
+          <h3>Limites territoriales</h3>
+          <ul>
+            <li *ngFor="let limite of geographie.limites">{{ limite }}</li>
+          </ul>
+        </div>
+        <div class="quartiers">
+          <h3>Quartiers</h3>
+          <div class="quartiers-grid">
+            <span class="quartier-tag" *ngFor="let quartier of geographie.quartiers">
+              {{ quartier }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="carte-section">
+        <div class="carte-placeholder" (click)="afficherCarte()">
+          <i class="fas fa-map-marked-alt"></i>
+          <p>Cliquez pour afficher la carte interactive</p>
+          <small>Coordonnées : {{ geographie.coordonnees.latitude }}, {{ geographie.coordonnees.longitude }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Infrastructures -->
+<section class="infrastructures">
+  <div class="container">
+    <div class="section-header">
+      <h2>Infrastructures et Équipements</h2>
+    </div>
+    <div class="infrastructures-grid">
+      <div class="infrastructure-category" *ngFor="let infra of infrastructures">
+        <h3>{{ infra.categorie }}</h3>
+        <ul class="equipements-list">
+          <li *ngFor="let equipement of infra.equipements">
+            <i class="fas fa-check-circle"></i>
+            {{ equipement }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Projets de développement -->
+<section class="projets-developpement">
+  <div class="container">
+    <div class="section-header">
+      <h2>Projets de Développement</h2>
+    </div>
+    <div class="projets-grid">
+      <div class="projet-card" *ngFor="let projet of projetsDevloppement">
+        <div class="projet-header">
+          <h3>{{ projet.nom }}</h3>
+          <span class="statut-badge" [ngClass]="'statut-' + projet.statut.toLowerCase().replace(' ', '-')">
+            {{ projet.statut }}
+          </span>
+        </div>
+        <p class="projet-description">{{ projet.description }}</p>
+        <div class="projet-details">
+          <div class="detail-item">
+            <i class="fas fa-money-bill-wave"></i>
+            <span>Budget : {{ projet.budget }}</span>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-clock"></i>
+            <span>Durée : {{ projet.duree }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer réutilisable -->
+<app-footer></app-footer>
