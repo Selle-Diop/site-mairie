@@ -133,7 +133,7 @@ export class TransparenceBudgetComponent implements OnInit {
         { nom: 'Plan architectural', type: 'PDF', url: '/docs/marche-plans.pdf', datePublication: new Date('2023-12-15') },
         { nom: 'Rapport d\'avancement T1', type: 'PDF', url: '/docs/marche-rapport-t1.pdf', datePublication: new Date('2024-03-31') }
       ],
-      photos: ['/assets/images/marche-avant.jpg', '/assets/images/marche-travaux.jpg']
+      photos: ['https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=400&h=300&fit=crop&crop=center', 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=center']
     },
     {
       id: '2',
@@ -162,7 +162,7 @@ export class TransparenceBudgetComponent implements OnInit {
         { nom: 'Rapport de réalisation', type: 'PDF', url: '/docs/centre-sante-rapport.pdf', datePublication: new Date('2023-12-15') },
         { nom: 'Bilan financier', type: 'PDF', url: '/docs/centre-sante-bilan.pdf', datePublication: new Date('2023-12-20') }
       ],
-      photos: ['/assets/images/centre-sante-1.jpg', '/assets/images/centre-sante-2.jpg']
+      photos: ['https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=300&fit=crop&crop=center', 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop&crop=center']
     },
     {
       id: '3',

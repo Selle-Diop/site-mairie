@@ -1,14 +1,42 @@
 <!-- Header réutilisable -->
 <app-header></app-header>
 
-<!-- Section Hero -->
+<!-- Section Hero avec slider -->
 <section class="hero">
-  <div class="hero-content">
-    <h2>Bienvenue à Sicap Liberté</h2>
-    <p>Votre mairie au service des citoyens</p>
-    <div class="hero-actions">
-      <button class="btn btn-primary" routerLink="/services-en-ligne">Services en ligne</button>
-      <button class="btn btn-secondary" routerLink="/contact">Nous contacter</button>
+  <div class="hero-slider">
+    <div class="hero-slide" 
+         *ngFor="let slide of heroSlides; let i = index" 
+         [class.active]="i === currentSlide"
+         [style.background-image]="'url(' + slide.image + ')'">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h2>{{ slide.title }}</h2>
+        <p>{{ slide.subtitle }}</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" [routerLink]="slide.primaryAction.link">{{ slide.primaryAction.text }}</button>
+          <button class="btn btn-secondary" [routerLink]="slide.secondaryAction.link">{{ slide.secondaryAction.text }}</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Navigation du slider -->
+    <div class="slider-nav">
+      <button class="slider-btn prev" (click)="previousSlide()">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="slider-btn next" (click)="nextSlide()">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+    
+    <!-- Indicateurs -->
+    <div class="slider-indicators">
+      <button 
+        *ngFor="let slide of heroSlides; let i = index" 
+        class="indicator" 
+        [class.active]="i === currentSlide"
+        (click)="goToSlide(i)">
+      </button>
     </div>
   </div>
 </section>
@@ -44,7 +72,7 @@
         <cite>{{ motDuMaire.auteur }}</cite>
       </div>
       <div class="mot-maire-image">
-        <img src="assets/images/maire.jpg" alt="Photo du Maire" class="maire-photo">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop&crop=face" alt="Photo du Maire" class="maire-photo">
       </div>
     </div>
   </div>

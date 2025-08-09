@@ -31,11 +31,11 @@ getContenuFormate(contenu: string): string {
       dateEvenement: new Date('2024-01-25'),
       categorie: 'Infrastructure',
       tags: ['marché', 'inauguration', 'commerce', 'développement'],
-      image: 'assets/images/actualites/marche-inauguration.jpg',
+      image: 'https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=600&h=400&fit=crop&crop=center',
       galerie: [
-        'assets/images/actualites/marche-1.jpg',
-        'assets/images/actualites/marche-2.jpg',
-        'assets/images/actualites/marche-3.jpg'
+        'https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop&crop=center'
       ],
       statut: 'publié',
       vues: 1250,
@@ -67,10 +67,10 @@ getContenuFormate(contenu: string): string {
       dateFinEvenement: new Date('2024-01-30'),
       categorie: 'Santé',
       tags: ['vaccination', 'santé', 'prévention', 'gratuit'],
-      image: 'assets/images/actualites/vaccination-campagne.jpg',
+      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=400&fit=crop&crop=center',
       galerie: [
-        'assets/images/actualites/centre-sante-1.jpg',
-        'assets/images/actualites/vaccination-1.jpg'
+        'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop&crop=center'
       ],
       statut: 'publié',
       vues: 890,
@@ -105,10 +105,10 @@ getContenuFormate(contenu: string): string {
       dateFinEvenement: new Date('2024-04-30'),
       categorie: 'Travaux',
       tags: ['route', 'travaux', 'circulation', 'infrastructure'],
-      image: 'assets/images/actualites/travaux-route.jpg',
+      image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&h=400&fit=crop&crop=center',
       galerie: [
-        'assets/images/actualites/route-avant.jpg',
-        'assets/images/actualites/plan-travaux.jpg'
+        'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop&crop=center'
       ],
       statut: 'publié',
       vues: 2150,
@@ -159,12 +159,12 @@ getContenuFormate(contenu: string): string {
       dateEvenement: new Date('2024-03-15'),
       categorie: 'Événement',
       tags: ['fête', 'culture', 'sport', 'communauté', 'gratuit'],
-      image: 'assets/images/actualites/fete-commune.jpg',
+      image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&h=400&fit=crop&crop=center',
       galerie: [
-        'assets/images/actualites/fete-2023-1.jpg',
-        'assets/images/actualites/fete-2023-2.jpg',
-        'assets/images/actualites/fete-2023-3.jpg',
-        'assets/images/actualites/programme-fete.jpg'
+        'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=300&fit=crop&crop=center'
       ],
       statut: 'publié',
       vues: 1850,
@@ -213,12 +213,12 @@ getContenuFormate(contenu: string): string {
       dateFinEvenement: new Date('2024-02-28'),
       categorie: 'Éducation',
       tags: ['inscription', 'école', 'éducation', 'enfants'],
-      image: 'assets/images/actualites/inscriptions-scolaires.jpg',
+      image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=400&fit=crop&crop=center',
       galerie: [
-        'assets/images/actualites/ecole-a.jpg',
-        'assets/images/actualites/ecole-b.jpg',
-        'assets/images/actualites/college.jpg',
-        'assets/images/actualites/lycee.jpg'
+        'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1562774053-701939374585?w=400&h=300&fit=crop&crop=center'
       ],
       statut: 'publié',
       vues: 3200,
@@ -268,11 +268,11 @@ getContenuFormate(contenu: string): string {
       dateEvenement: new Date('2024-03-01'),
       categorie: 'Environnement',
       tags: ['déchets', 'tri', 'environnement', 'recyclage'],
-      image: 'assets/images/actualites/tri-selectif.jpg',
+      image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&h=400&fit=crop&crop=center',
       galerie: [
-        'assets/images/actualites/bacs-tri.jpg',
-        'assets/images/actualites/camion-collecte.jpg',
-        'assets/images/actualites/centre-tri.jpg'
+        'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=400&h=300&fit=crop&crop=center'
       ],
       statut: 'publié',
       vues: 1650,

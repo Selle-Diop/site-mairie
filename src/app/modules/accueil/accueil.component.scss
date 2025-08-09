@@ -63,28 +63,87 @@ $border-color: #ddd;
   }
 }
 
-// Section Hero
+// Section Hero avec slider
 .hero {
-  background: linear-gradient(135deg, $primary-color, lighten($primary-color, 20%));
-  color: white;
-  padding: 4rem 2rem;
-  text-align: center;
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+}
+
+.hero-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  // Fallback gradients if images don't load
+  &:nth-child(1) {
+    background: linear-gradient(135deg, #2c5aa0, #3498db);
+  }
+  
+  &:nth-child(2) {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+  }
+  
+  &:nth-child(3) {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+  }
+  
+  &:nth-child(4) {
+    background: linear-gradient(135deg, #8e44ad, #9b59b6);
+  }
+  
+  &.active {
+    opacity: 1;
+  }
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
 }
 
 .hero-content {
+  position: relative;
+  z-index: 2;
   max-width: 800px;
   margin: 0 auto;
+  text-align: center;
+  color: white;
+  padding: 0 2rem;
 
   h2 {
     font-size: 3rem;
     margin-bottom: 1rem;
     font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
   }
 
   p {
     font-size: 1.2rem;
     margin-bottom: 2rem;
     opacity: 0.9;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -93,6 +152,75 @@ $border-color: #ddd;
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+// Navigation du slider
+.slider-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2rem;
+  pointer-events: none;
+}
+
+.slider-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  pointer-events: all;
+  backdrop-filter: blur(10px);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+  }
+  
+  i {
+    font-size: 1.2rem;
+  }
+}
+
+// Indicateurs du slider
+.slider-indicators {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &.active {
+    background: white;
+    transform: scale(1.2);
+  }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
 }
 
 // Boutons
@@ -490,7 +618,36 @@ $border-color: #ddd;
   }
 }
 
-// Responsive
+// Responsive design pour le slider
+@media (max-width: 768px) {
+  .hero {
+    height: 500px;
+  }
+  
+  .hero-content {
+    h2 {
+      font-size: 2rem;
+    }
+    
+    p {
+      font-size: 1rem;
+    }
+  }
+  
+  .slider-nav {
+    padding: 0 1rem;
+  }
+  
+  .slider-btn {
+    width: 40px;
+    height: 40px;
+    
+    i {
+      font-size: 1rem;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;

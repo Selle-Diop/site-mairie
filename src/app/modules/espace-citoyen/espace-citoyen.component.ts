@@ -106,7 +106,7 @@ export class EspaceCitoyenComponent implements OnInit {
       dateMiseAJour: new Date('2024-01-20'),
       localisation: 'Avenue Bourguiba, près du marché central',
       numeroReference: 'SIG-2024-001',
-      photos: ['/assets/images/nid-poule-1.jpg', '/assets/images/nid-poule-2.jpg'],
+      photos: ['https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop&crop=center', 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop&crop=center'],
       commentairesPublics: [
         {
           id: '1',

@@ -138,7 +138,7 @@ export class ContactComponent implements OnInit {
       service: 'Direction générale',
       telephone: '33 8 XX XX XX XX',
       email: 'maire@sicap-liberte.sn',
-      photo: '/assets/images/maire.jpg',
+      photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=250&fit=crop&crop=face',
       biographie: 'Élu maire en 2022, M. Moussa SECK s\'engage pour le développement durable et la modernisation de Sicap Liberté.'
     },
     {
@@ -149,7 +149,7 @@ export class ContactComponent implements OnInit {
       service: 'Secrétariat général',
       telephone: '33 8 XX XX XX XX',
       email: 'secretaire.general@sicap-liberte.sn',
-      photo: '/assets/images/secretaire-generale.jpg',
+      photo: 'https://images.unsplash.com/photo-1494790108755-2616c5e0b8e4?w=200&h=250&fit=crop&crop=face',
       biographie: 'Forte de 15 ans d\'expérience dans l\'administration publique, Mme Fatou DIOP coordonne les services municipaux.'
     },
     {

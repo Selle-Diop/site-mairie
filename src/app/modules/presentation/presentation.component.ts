@@ -25,7 +25,7 @@ export class PresentationComponent {
     maire: {
       nom: 'Souleymane Camara',
       mandat: '2022-2027',
-      photo: 'assets/images/maire-portrait.jpg'
+      photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=400&fit=crop&crop=face'
     },
     conseilMunicipal: {
       nombreConseillers: 25,

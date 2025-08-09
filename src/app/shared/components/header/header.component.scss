@@ -11,6 +11,8 @@ $border-color: #ddd;
   position: sticky;
   top: 0;
   z-index: 1000;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .navbar {
@@ -18,9 +20,15 @@ $border-color: #ddd;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  max-width: 1200px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
   position: relative;
+  box-sizing: border-box;
+  
+  @media (min-width: 1200px) {
+    max-width: 1200px;
+  }
 }
 
 // Marque/Logo
@@ -54,9 +62,19 @@ $border-color: #ddd;
   margin: 0;
   padding: 0;
   gap: 2rem;
+  flex-wrap: nowrap;
+  overflow: hidden;
+
+  @media (max-width: 1200px) {
+    gap: 1.5rem;
+  }
 
   @media (max-width: 1024px) {
-    gap: 1.5rem;
+    gap: 1rem;
+  }
+
+  @media (max-width: 900px) {
+    gap: 0.5rem;
   }
 
   @media (max-width: 768px) {
@@ -76,6 +94,22 @@ $border-color: #ddd;
     transition: all 0.3s ease;
     display: block;
     white-space: nowrap;
+    font-size: 0.95rem;
+
+    @media (max-width: 1200px) {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1024px) {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 900px) {
+      padding: 0.4rem 0.5rem;
+      font-size: 0.8rem;
+    }
 
     &:hover {
       background: lighten($primary-color, 45%);
@@ -207,6 +241,12 @@ $border-color: #ddd;
   }
 }
 
+@media (max-width: 900px) {
+  .navbar {
+    padding: 1rem 1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .navbar {
     padding: 1rem;
@@ -217,6 +257,18 @@ $border-color: #ddd;
 
     .logo {
       height: 40px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.8rem;
+  }
+
+  .nav-brand {
+    .logo {
+      height: 35px;
     }
   }
 }
