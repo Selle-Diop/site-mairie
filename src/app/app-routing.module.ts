@@ -39,6 +39,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/contact/contact.module').then(m => m.ContactModule)
   },
   {
+    path: 'admin',
+    loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

@@ -1,0 +1,324 @@
+<div class="services-management">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Gestion des services</h1>
+      <p>Gérez les services municipaux et leurs modalités</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary">
+        <i class="material-icons">analytics</i>
+        Statistiques
+      </button>
+      <button class="btn btn-primary" (click)="openAddServiceModal()">
+        <i class="material-icons">add_business</i>
+        Nouveau service
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="search-box">
+      <i class="material-icons">search</i>
+      <input 
+        type="text" 
+        placeholder="Rechercher un service..." 
+        [(ngModel)]="searchTerm"
+        (input)="filterServices()">
+    </div>
+    
+    <div class="filter-controls">
+      <select [(ngModel)]="selectedCategory" (change)="filterServices()" class="form-select">
+        <option value="">Toutes les catégories</option>
+        <option *ngFor="let category of categories" [value]="category">{{category}}</option>
+      </select>
+      
+      <select [(ngModel)]="selectedStatus" (change)="filterServices()" class="form-select">
+        <option value="">Tous les statuts</option>
+        <option value="active">Actif</option>
+        <option value="inactive">Inactif</option>
+        <option value="online">En ligne</option>
+        <option value="offline">Hors ligne</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Services Grid -->
+  <div class="services-grid">
+    <div class="service-card" *ngFor="let service of filteredServices">
+      <div class="service-header">
+        <div class="service-badges">
+          <span class="category-badge">{{service.category}}</span>
+          <span class="online-badge" [class.online]="service.isOnline" [class.offline]="!service.isOnline">
+            <i class="material-icons">{{service.isOnline ? 'cloud' : 'cloud_off'}}</i>
+            {{service.isOnline ? 'En ligne' : 'Hors ligne'}}
+          </span>
+        </div>
+        <div class="service-actions">
+          <button class="action-btn edit" (click)="openEditServiceModal(service)" title="Modifier">
+            <i class="material-icons">edit</i>
+          </button>
+          <button class="action-btn toggle-online" 
+                  (click)="toggleOnlineStatus(service)" 
+                  [title]="service.isOnline ? 'Mettre hors ligne' : 'Mettre en ligne'">
+            <i class="material-icons">{{service.isOnline ? 'cloud_off' : 'cloud'}}</i>
+          </button>
+          <button class="action-btn toggle-status" 
+                  (click)="toggleServiceStatus(service)" 
+                  [title]="service.isActive ? 'Désactiver' : 'Activer'"
+                  [class.active]="service.isActive">
+            <i class="material-icons">{{service.isActive ? 'toggle_on' : 'toggle_off'}}</i>
+          </button>
+          <button class="action-btn delete" (click)="deleteService(service.id)" title="Supprimer">
+            <i class="material-icons">delete</i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="service-content">
+        <h3 class="service-name">{{service.name}}</h3>
+        <p class="service-description">{{service.description}}</p>
+        
+        <div class="service-details">
+          <div class="detail-item">
+            <i class="material-icons">schedule</i>
+            <span>{{service.processingTime}}</span>
+          </div>
+          <div class="detail-item">
+            <i class="material-icons">payments</i>
+            <span>{{formatCost(service.cost)}}</span>
+          </div>
+          <div class="detail-item" *ngIf="service.url">
+            <i class="material-icons">link</i>
+            <a [href]="service.url" target="_blank">Accéder au service</a>
+          </div>
+        </div>
+        
+        <div class="service-requirements" *ngIf="service.documents.length > 0">
+          <h4>Documents requis :</h4>
+          <ul>
+            <li *ngFor="let doc of service.documents">{{doc}}</li>
+          </ul>
+        </div>
+        
+        <div class="service-footer">
+          <span class="update-date">Mis à jour le {{service.updatedAt | date:'dd/MM/yyyy'}}</span>
+          <span class="status-indicator" [class.active]="service.isActive" [class.inactive]="!service.isActive">
+            {{service.isActive ? 'Actif' : 'Inactif'}}
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="filteredServices.length === 0" class="no-results">
+      <i class="material-icons">business_center</i>
+      <p>Aucun service trouvé</p>
+    </div>
+  </div>
+</div>
+
+<!-- Add Service Modal -->
+<div class="modal-overlay" *ngIf="showAddServiceModal" (click)="closeAddServiceModal()">
+  <div class="modal large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Nouveau service</h2>
+      <button class="close-btn" (click)="closeAddServiceModal()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form (ngSubmit)="addService()">
+        <div class="form-group">
+          <label for="name">Nom du service *</label>
+          <input type="text" id="name" [(ngModel)]="newService.name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Description *</label>
+          <textarea id="description" [(ngModel)]="newService.description" name="description" rows="3" required></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="category">Catégorie</label>
+            <select id="category" [(ngModel)]="newService.category" name="category">
+              <option value="">Sélectionner une catégorie</option>
+              <option *ngFor="let category of categories" [value]="category">{{category}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="processingTime">Délai de traitement</label>
+            <input type="text" id="processingTime" [(ngModel)]="newService.processingTime" name="processingTime" 
+                   placeholder="ex: 2-3 jours ouvrables">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cost">Coût (FCFA)</label>
+            <input type="number" id="cost" [(ngModel)]="newService.cost" name="cost" min="0">
+          </div>
+          <div class="form-group">
+            <label for="url">URL du service (si en ligne)</label>
+            <input type="url" id="url" [(ngModel)]="newService.url" name="url" placeholder="https://...">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="newService.isOnline" name="isOnline">
+                <span class="checkmark"></span>
+                Service disponible en ligne
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="newService.isActive" name="isActive">
+                <span class="checkmark"></span>
+                Service actif
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Documents requis</label>
+          <div class="list-input">
+            <div class="items-list" *ngIf="newService.documents && newService.documents.length > 0">
+              <span class="item" *ngFor="let doc of newService.documents">
+                {{doc}}
+                <i class="material-icons" (click)="removeDocument(doc)">close</i>
+              </span>
+            </div>
+            <input type="text" placeholder="Appuyez sur Entrée pour ajouter un document" (keydown)="addDocument($event)">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Conditions requises</label>
+          <div class="list-input">
+            <div class="items-list" *ngIf="newService.requirements && newService.requirements.length > 0">
+              <span class="item" *ngFor="let req of newService.requirements">
+                {{req}}
+                <i class="material-icons" (click)="removeRequirement(req)">close</i>
+              </span>
+            </div>
+            <input type="text" placeholder="Appuyez sur Entrée pour ajouter une condition" (keydown)="addRequirement($event)">
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeAddServiceModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Créer le service</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Service Modal -->
+<div class="modal-overlay" *ngIf="showEditServiceModal" (click)="closeEditServiceModal()">
+  <div class="modal large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Modifier le service</h2>
+      <button class="close-btn" (click)="closeEditServiceModal()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    
+    <div class="modal-body" *ngIf="selectedService">
+      <form (ngSubmit)="updateService()">
+        <div class="form-group">
+          <label for="editName">Nom du service *</label>
+          <input type="text" id="editName" [(ngModel)]="selectedService.name" name="editName" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="editDescription">Description *</label>
+          <textarea id="editDescription" [(ngModel)]="selectedService.description" name="editDescription" rows="3" required></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editCategory">Catégorie</label>
+            <select id="editCategory" [(ngModel)]="selectedService.category" name="editCategory">
+              <option *ngFor="let category of categories" [value]="category">{{category}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editProcessingTime">Délai de traitement</label>
+            <input type="text" id="editProcessingTime" [(ngModel)]="selectedService.processingTime" name="editProcessingTime">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editCost">Coût (FCFA)</label>
+            <input type="number" id="editCost" [(ngModel)]="selectedService.cost" name="editCost" min="0">
+          </div>
+          <div class="form-group">
+            <label for="editUrl">URL du service</label>
+            <input type="url" id="editUrl" [(ngModel)]="selectedService.url" name="editUrl">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="selectedService.isOnline" name="editIsOnline">
+                <span class="checkmark"></span>
+                Service disponible en ligne
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="selectedService.isActive" name="editIsActive">
+                <span class="checkmark"></span>
+                Service actif
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Documents requis</label>
+          <div class="list-input">
+            <div class="items-list" *ngIf="selectedService.documents && selectedService.documents.length > 0">
+              <span class="item" *ngFor="let doc of selectedService.documents">
+                {{doc}}
+                <i class="material-icons" (click)="removeDocument(doc, true)">close</i>
+              </span>
+            </div>
+            <input type="text" placeholder="Appuyez sur Entrée pour ajouter un document" (keydown)="addDocument($event, true)">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Conditions requises</label>
+          <div class="list-input">
+            <div class="items-list" *ngIf="selectedService.requirements && selectedService.requirements.length > 0">
+              <span class="item" *ngFor="let req of selectedService.requirements">
+                {{req}}
+                <i class="material-icons" (click)="removeRequirement(req, true)">close</i>
+              </span>
+            </div>
+            <input type="text" placeholder="Appuyez sur Entrée pour ajouter une condition" (keydown)="addRequirement($event, true)">
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeEditServiceModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Mettre à jour</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

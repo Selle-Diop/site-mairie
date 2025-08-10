@@ -1,0 +1,237 @@
+<div class="content-management">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Gestion du contenu</h1>
+      <p>Gérez les articles, actualités et pages du site</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary">
+        <i class="material-icons">import_export</i>
+        Importer/Exporter
+      </button>
+      <button class="btn btn-primary" (click)="openAddArticleModal()">
+        <i class="material-icons">add</i>
+        Nouvel article
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="search-box">
+      <i class="material-icons">search</i>
+      <input 
+        type="text" 
+        placeholder="Rechercher un article..." 
+        [(ngModel)]="searchTerm"
+        (input)="filterArticles()">
+    </div>
+    
+    <div class="filter-controls">
+      <select [(ngModel)]="selectedCategory" (change)="filterArticles()" class="form-select">
+        <option value="">Toutes les catégories</option>
+        <option *ngFor="let category of categories" [value]="category">{{category}}</option>
+      </select>
+      
+      <select [(ngModel)]="selectedStatus" (change)="filterArticles()" class="form-select">
+        <option value="">Tous les statuts</option>
+        <option value="draft">Brouillon</option>
+        <option value="published">Publié</option>
+        <option value="archived">Archivé</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Articles Grid -->
+  <div class="articles-grid">
+    <div class="article-card" *ngFor="let article of filteredArticles">
+      <div class="article-header">
+        <div class="article-meta">
+          <span class="category-badge">{{article.category}}</span>
+          <span class="status-badge" [style.background-color]="getStatusColor(article.status)">
+            {{getStatusLabel(article.status)}}
+          </span>
+        </div>
+        <div class="article-actions">
+          <button class="action-btn edit" (click)="openEditArticleModal(article)" title="Modifier">
+            <i class="material-icons">edit</i>
+          </button>
+          <button class="action-btn publish" 
+                  *ngIf="article.status === 'draft'" 
+                  (click)="publishArticle(article)" 
+                  title="Publier">
+            <i class="material-icons">publish</i>
+          </button>
+          <button class="action-btn archive" 
+                  *ngIf="article.status === 'published'" 
+                  (click)="archiveArticle(article)" 
+                  title="Archiver">
+            <i class="material-icons">archive</i>
+          </button>
+          <button class="action-btn delete" (click)="deleteArticle(article.id)" title="Supprimer">
+            <i class="material-icons">delete</i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="article-content">
+        <h3 class="article-title">{{article.title}}</h3>
+        <p class="article-excerpt">{{article.excerpt}}</p>
+        
+        <div class="article-tags" *ngIf="article.tags.length > 0">
+          <span class="tag" *ngFor="let tag of article.tags">{{tag}}</span>
+        </div>
+        
+        <div class="article-footer">
+          <div class="author-info">
+            <i class="material-icons">person</i>
+            <span>{{article.author}}</span>
+          </div>
+          <div class="date-info">
+            <i class="material-icons">schedule</i>
+            <span>{{article.updatedAt | date:'dd/MM/yyyy'}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="filteredArticles.length === 0" class="no-results">
+      <i class="material-icons">article</i>
+      <p>Aucun article trouvé</p>
+    </div>
+  </div>
+</div>
+
+<!-- Add Article Modal -->
+<div class="modal-overlay" *ngIf="showAddArticleModal" (click)="closeAddArticleModal()">
+  <div class="modal large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Nouvel article</h2>
+      <button class="close-btn" (click)="closeAddArticleModal()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form (ngSubmit)="addArticle()">
+        <div class="form-group">
+          <label for="title">Titre *</label>
+          <input type="text" id="title" [(ngModel)]="newArticle.title" name="title" required>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="category">Catégorie</label>
+            <select id="category" [(ngModel)]="newArticle.category" name="category">
+              <option value="">Sélectionner une catégorie</option>
+              <option *ngFor="let category of categories" [value]="category">{{category}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="status">Statut</label>
+            <select id="status" [(ngModel)]="newArticle.status" name="status">
+              <option value="draft">Brouillon</option>
+              <option value="published">Publié</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="excerpt">Résumé</label>
+          <textarea id="excerpt" [(ngModel)]="newArticle.excerpt" name="excerpt" rows="3" 
+                    placeholder="Résumé de l'article (optionnel)"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="content">Contenu *</label>
+          <textarea id="content" [(ngModel)]="newArticle.content" name="content" rows="10" required
+                    placeholder="Contenu de l'article"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Tags</label>
+          <div class="tags-input">
+            <div class="tags-list" *ngIf="newArticle.tags && newArticle.tags.length > 0">
+              <span class="tag" *ngFor="let tag of newArticle.tags">
+                {{tag}}
+                <i class="material-icons" (click)="removeTag(tag)">close</i>
+              </span>
+            </div>
+            <input type="text" placeholder="Appuyez sur Entrée pour ajouter un tag" (keydown)="addTag($event)">
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeAddArticleModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Créer l'article</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Article Modal -->
+<div class="modal-overlay" *ngIf="showEditArticleModal" (click)="closeEditArticleModal()">
+  <div class="modal large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Modifier l'article</h2>
+      <button class="close-btn" (click)="closeEditArticleModal()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+    
+    <div class="modal-body" *ngIf="selectedArticle">
+      <form (ngSubmit)="updateArticle()">
+        <div class="form-group">
+          <label for="editTitle">Titre *</label>
+          <input type="text" id="editTitle" [(ngModel)]="selectedArticle.title" name="editTitle" required>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editCategory">Catégorie</label>
+            <select id="editCategory" [(ngModel)]="selectedArticle.category" name="editCategory">
+              <option *ngFor="let category of categories" [value]="category">{{category}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editStatus">Statut</label>
+            <select id="editStatus" [(ngModel)]="selectedArticle.status" name="editStatus">
+              <option value="draft">Brouillon</option>
+              <option value="published">Publié</option>
+              <option value="archived">Archivé</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="editExcerpt">Résumé</label>
+          <textarea id="editExcerpt" [(ngModel)]="selectedArticle.excerpt" name="editExcerpt" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="editContent">Contenu *</label>
+          <textarea id="editContent" [(ngModel)]="selectedArticle.content" name="editContent" rows="10" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Tags</label>
+          <div class="tags-input">
+            <div class="tags-list" *ngIf="selectedArticle.tags && selectedArticle.tags.length > 0">
+              <span class="tag" *ngFor="let tag of selectedArticle.tags">
+                {{tag}}
+                <i class="material-icons" (click)="removeTag(tag, true)">close</i>
+              </span>
+            </div>
+            <input type="text" placeholder="Appuyez sur Entrée pour ajouter un tag" (keydown)="addTag($event)">
+          </div>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="closeEditArticleModal()">Annuler</button>
+          <button type="submit" class="btn btn-primary">Mettre à jour</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,97 @@
+<div class="dashboard">
+  <div class="dashboard-header">
+    <h1>Tableau de bord</h1>
+    <p>Vue d'ensemble de l'administration de la mairie</p>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card" *ngFor="let stat of stats">
+      <div class="stat-icon" [style.background-color]="stat.color">
+        <i class="material-icons">{{stat.icon}}</i>
+      </div>
+      <div class="stat-content">
+        <h3>{{stat.value | number}}</h3>
+        <p>{{stat.title}}</p>
+        <div class="stat-trend" [class.positive]="stat.trend > 0" [class.negative]="stat.trend < 0">
+          <i class="material-icons">{{stat.trend > 0 ? 'trending_up' : 'trending_down'}}</i>
+          <span>{{stat.trend > 0 ? '+' : ''}}{{stat.trend}}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+    <!-- Chart Section -->
+    <div class="chart-section">
+      <div class="section-header">
+        <h2>Statistiques mensuelles</h2>
+        <div class="chart-controls">
+          <select class="form-select">
+            <option value="6">6 derniers mois</option>
+            <option value="12">12 derniers mois</option>
+          </select>
+        </div>
+      </div>
+      <div class="chart-container">
+        <canvas id="statisticsChart" width="400" height="200"></canvas>
+        <!-- Placeholder for chart - you can integrate Chart.js here -->
+        <div class="chart-placeholder">
+          <i class="material-icons">bar_chart</i>
+          <p>Graphique des statistiques</p>
+          <small>Intégration Chart.js à venir</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="activities-section">
+      <div class="section-header">
+        <h2>Activités récentes</h2>
+        <button class="btn-link">Voir tout</button>
+      </div>
+      <div class="activities-list">
+        <div class="activity-item" *ngFor="let activity of recentActivities">
+          <div class="activity-icon" [style.background-color]="getActivityColor(activity.type)">
+            <i class="material-icons">{{getActivityIcon(activity.type)}}</i>
+          </div>
+          <div class="activity-content">
+            <p class="activity-description">{{activity.description}}</p>
+            <div class="activity-meta">
+              <span class="activity-user">{{activity.user}}</span>
+              <span class="activity-time">{{formatTimeAgo(activity.timestamp)}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h2>Actions rapides</h2>
+    <div class="actions-grid">
+      <button class="action-btn" routerLink="/admin/users">
+        <i class="material-icons">person_add</i>
+        <span>Ajouter utilisateur</span>
+      </button>
+      <button class="action-btn" routerLink="/admin/content">
+        <i class="material-icons">add_circle</i>
+        <span>Publier article</span>
+      </button>
+      <button class="action-btn" routerLink="/admin/services">
+        <i class="material-icons">business_center</i>
+        <span>Gérer services</span>
+      </button>
+      <button class="action-btn" routerLink="/admin/requests">
+        <i class="material-icons">assignment</i>
+        <span>Traiter demandes</span>
+      </button>
+      <button class="action-btn" routerLink="/admin/settings">
+        <i class="material-icons">settings</i>
+        <span>Paramètres</span>
+      </button>
+    </div>
+  </div>
+</div>

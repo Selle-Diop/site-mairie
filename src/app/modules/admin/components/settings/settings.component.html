@@ -1,0 +1,252 @@
+<div class="settings">
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Paramètres du site</h1>
+      <p>Configurez les paramètres généraux de votre site</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="resetSettings()">
+        <i class="material-icons">restore</i>
+        Réinitialiser
+      </button>
+      <button class="btn btn-primary" (click)="saveSettings()" [disabled]="isSaving">
+        <i class="material-icons">{{isSaving ? 'hourglass_empty' : 'save'}}</i>
+        {{isSaving ? 'Sauvegarde...' : 'Sauvegarder'}}
+      </button>
+    </div>
+  </div>
+
+  <div class="settings-container">
+    <!-- Tabs Navigation -->
+    <div class="tabs-nav">
+      <button class="tab-btn" 
+              [class.active]="activeTab === 'general'" 
+              (click)="setActiveTab('general')">
+        <i class="material-icons">settings</i>
+        Général
+      </button>
+      <button class="tab-btn" 
+              [class.active]="activeTab === 'contact'" 
+              (click)="setActiveTab('contact')">
+        <i class="material-icons">contact_mail</i>
+        Contact
+      </button>
+      <button class="tab-btn" 
+              [class.active]="activeTab === 'social'" 
+              (click)="setActiveTab('social')">
+        <i class="material-icons">share</i>
+        Réseaux sociaux
+      </button>
+      <button class="tab-btn" 
+              [class.active]="activeTab === 'notifications'" 
+              (click)="setActiveTab('notifications')">
+        <i class="material-icons">notifications</i>
+        Notifications
+      </button>
+      <button class="tab-btn" 
+              [class.active]="activeTab === 'maintenance'" 
+              (click)="setActiveTab('maintenance')">
+        <i class="material-icons">build</i>
+        Maintenance
+      </button>
+      <button class="tab-btn" 
+              [class.active]="activeTab === 'backup'" 
+              (click)="setActiveTab('backup')">
+        <i class="material-icons">backup</i>
+        Sauvegarde
+      </button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="tab-content">
+      <!-- General Settings -->
+      <div class="tab-panel" *ngIf="activeTab === 'general'">
+        <h2>Paramètres généraux</h2>
+        <div class="form-section">
+          <div class="form-group">
+            <label for="siteName">Nom du site</label>
+            <input type="text" id="siteName" [(ngModel)]="settings.siteName">
+          </div>
+          
+          <div class="form-group">
+            <label for="siteDescription">Description du site</label>
+            <textarea id="siteDescription" [(ngModel)]="settings.siteDescription" rows="3"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="workingHours">Horaires d'ouverture</label>
+            <input type="text" id="workingHours" [(ngModel)]="settings.workingHours">
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Settings -->
+      <div class="tab-panel" *ngIf="activeTab === 'contact'">
+        <h2>Informations de contact</h2>
+        <div class="form-section">
+          <div class="form-group">
+            <label for="contactEmail">Email de contact</label>
+            <input type="email" id="contactEmail" [(ngModel)]="settings.contactEmail">
+          </div>
+          
+          <div class="form-group">
+            <label for="contactPhone">Téléphone</label>
+            <input type="tel" id="contactPhone" [(ngModel)]="settings.contactPhone">
+          </div>
+          
+          <div class="form-group">
+            <label for="address">Adresse</label>
+            <textarea id="address" [(ngModel)]="settings.address" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social Media Settings -->
+      <div class="tab-panel" *ngIf="activeTab === 'social'">
+        <h2>Réseaux sociaux</h2>
+        <div class="form-section">
+          <div class="form-group">
+            <label for="facebook">Facebook</label>
+            <input type="url" id="facebook" [(ngModel)]="settings.socialMedia.facebook" placeholder="https://facebook.com/...">
+          </div>
+          
+          <div class="form-group">
+            <label for="twitter">Twitter</label>
+            <input type="url" id="twitter" [(ngModel)]="settings.socialMedia.twitter" placeholder="https://twitter.com/...">
+          </div>
+          
+          <div class="form-group">
+            <label for="instagram">Instagram</label>
+            <input type="url" id="instagram" [(ngModel)]="settings.socialMedia.instagram" placeholder="https://instagram.com/...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications Settings -->
+      <div class="tab-panel" *ngIf="activeTab === 'notifications'">
+        <h2>Paramètres de notifications</h2>
+        <div class="form-section">
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="settings.notifications.emailNotifications">
+              <span class="checkmark"></span>
+              <div class="checkbox-content">
+                <strong>Notifications par email</strong>
+                <p>Recevoir des notifications par email pour les nouvelles demandes</p>
+              </div>
+            </label>
+          </div>
+          
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="settings.notifications.smsNotifications">
+              <span class="checkmark"></span>
+              <div class="checkbox-content">
+                <strong>Notifications par SMS</strong>
+                <p>Recevoir des notifications par SMS pour les demandes urgentes</p>
+              </div>
+            </label>
+          </div>
+          
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="settings.notifications.pushNotifications">
+              <span class="checkmark"></span>
+              <div class="checkbox-content">
+                <strong>Notifications push</strong>
+                <p>Recevoir des notifications push dans le navigateur</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Maintenance Settings -->
+      <div class="tab-panel" *ngIf="activeTab === 'maintenance'">
+        <h2>Mode maintenance</h2>
+        <div class="form-section">
+          <div class="maintenance-status">
+            <div class="status-indicator" [class.active]="settings.maintenance.enabled">
+              <i class="material-icons">{{settings.maintenance.enabled ? 'build' : 'check_circle'}}</i>
+              <span>{{settings.maintenance.enabled ? 'Maintenance activée' : 'Site en ligne'}}</span>
+            </div>
+            <button class="btn" 
+                    [class.btn-danger]="settings.maintenance.enabled"
+                    [class.btn-warning]="!settings.maintenance.enabled"
+                    (click)="toggleMaintenance()">
+              {{settings.maintenance.enabled ? 'Désactiver' : 'Activer'}} la maintenance
+            </button>
+          </div>
+          
+          <div class="form-group">
+            <label for="maintenanceMessage">Message de maintenance</label>
+            <textarea id="maintenanceMessage" 
+                      [(ngModel)]="settings.maintenance.message" 
+                      rows="4"
+                      placeholder="Message affiché aux visiteurs pendant la maintenance"></textarea>
+          </div>
+          
+          <div class="maintenance-actions">
+            <button class="btn btn-secondary" (click)="clearCache()">
+              <i class="material-icons">clear_all</i>
+              Vider le cache
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backup Settings -->
+      <div class="tab-panel" *ngIf="activeTab === 'backup'">
+        <h2>Sauvegarde et restauration</h2>
+        <div class="form-section">
+          <div class="backup-actions">
+            <div class="action-card">
+              <div class="action-info">
+                <h3>Exporter les paramètres</h3>
+                <p>Téléchargez une copie de tous vos paramètres</p>
+              </div>
+              <button class="btn btn-primary" (click)="exportSettings()">
+                <i class="material-icons">download</i>
+                Exporter
+              </button>
+            </div>
+            
+            <div class="action-card">
+              <div class="action-info">
+                <h3>Importer les paramètres</h3>
+                <p>Restaurez vos paramètres depuis un fichier</p>
+              </div>
+              <div class="file-input-wrapper">
+                <input type="file" 
+                       id="importFile" 
+                       accept=".json" 
+                       (change)="importSettings($event)"
+                       style="display: none;">
+                <!-- <button class="btn btn-secondary" (click)="document.getElementById('importFile')?.click()">
+                  <i class="material-icons">upload</i>
+                  Importer
+                </button> -->
+                <input #importFile type="file" 
+       id="importFile" 
+       accept=".json" 
+       (change)="importSettings($event)"
+       style="display: none;">
+              </div>
+            </div>
+            
+            <div class="action-card">
+              <div class="action-info">
+                <h3>Sauvegarde complète</h3>
+                <p>Générez une sauvegarde complète du système</p>
+              </div>
+              <button class="btn btn-success" (click)="generateBackup()">
+                <i class="material-icons">backup</i>
+                Créer une sauvegarde
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
