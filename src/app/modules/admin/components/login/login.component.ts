@@ -20,9 +20,9 @@ export class LoginComponent implements OnInit {
 
   // Comptes de démonstration
   demoAccounts = [
-    { email: 'admin@mairie.sn', password: 'admin123', role: 'Super Admin' },
-    { email: 'agent@mairie.sn', password: 'agent123', role: 'Agent Municipal' },
-    { email: 'moderateur@mairie.sn', password: 'mod123', role: 'Modérateur' }
+    { email: 'adminmairie.sn', password: 'admin123', role: 'Super Admin' },
+    { email: 'agentmairie.sn', password: 'agent123', role: 'Agent Municipal' },
+    { email: 'moderateurmairie.sn', password: 'mod123', role: 'Modérateur' }
   ];
 
   constructor(private router: Router) { }
